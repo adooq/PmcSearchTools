@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="selleck.email.dao.YellowPageMapper">
+	<resultMap id="BaseResultMap" type="selleck.email.pojo.YellowPage">
+		<id column="ID" property="id" jdbcType="INTEGER" />
+		<result column="title" property="title" jdbcType="VARCHAR" />
+		<result column="keyword" property="keyword" jdbcType="VARCHAR" />
+		<result column="near" property="near" jdbcType="VARCHAR" />
+		<result column="country" property="country" jdbcType="VARCHAR" />
+		<result column="address" property="address" jdbcType="VARCHAR" />
+		<result column="email" property="email" jdbcType="VARCHAR" />
+		<result column="telephone" property="telephone" jdbcType="VARCHAR" />
+		<result column="website" property="website" jdbcType="VARCHAR" />
+		<result column="url" property="url" jdbcType="VARCHAR" />
+		<result column="have_read" property="have_read" jdbcType="TINYINT" />
+		<result column="Social Links" property="socialLinks" jdbcType="VARCHAR" />
+		<result column="Services/Products" property="servicesProducts" jdbcType="VARCHAR" />
+		<result column="Neighborhoods" property="neighborhoods" jdbcType="VARCHAR" />
+		<result column="Hours" property="hours" jdbcType="VARCHAR" />
+		<result column="Payment method" property="paymentMethod" jdbcType="VARCHAR" />
+		<result column="General Info" property="generalInfo" jdbcType="VARCHAR" />
+		<result column="Location" property="location" jdbcType="VARCHAR" />
+		<result column="Price Range" property="priceRange" jdbcType="VARCHAR" />
+		<result column="Extra Phones" property="extraPhones" jdbcType="VARCHAR" />
+		<result column="Brands" property="brands" jdbcType="VARCHAR" />
+		<result column="Categories" property="categories" jdbcType="VARCHAR" />
+		<result column="Languages" property="languages" jdbcType="VARCHAR" />
+		<result column="Accreditation" property="accreditation" jdbcType="VARCHAR" />
+		<result column="Other Links" property="otherlinks" jdbcType="VARCHAR" />
+		<result column="AKA" property="aka" jdbcType="VARCHAR" />
+		<result column="Amenities" property="amenities" jdbcType="VARCHAR" />
+		<result column="Associations" property="associations" jdbcType="VARCHAR" />
+		<result column="Other Email" property="otherEmail" jdbcType="VARCHAR" />
+		
+	</resultMap>
+    
+    <sql id="Example_Where_Clause" >
+    <trim prefix="where" prefixOverrides="and|or" >
+      <if test="condition.email != null" >
+         and email = #{condition.email}
+      </if>
+      <if test="condition.have_read != null" >
+         and have_read = #{condition.have_read}
+      </if>
+    </trim>
+  </sql>
+  	
+  	<sql id="Base_Column_List">
+		id,title,keyword,near,country,address,email,telephone,website,url,have_read,`Social Links`,`Services/Products`,Neighborhoods,Hours,`Payment method`,
+		`General Info`,Location,`Price Range`,`Extra Phones`,Brands,Categories,Languages,Accreditation,`Other Links`,AKA,Amenities,Associations,`Other Email`
+  	</sql>
+  	
+  	<select id="selectByExample" resultMap="BaseResultMap" parameterType="common.handle.model.Criteria" >
+    select
+    <if test="distinct" >
+      distinct
+    </if>
+    <include refid="Base_Column_List" />
+    from search_yellowpage_by_keyword
+    <if test="whereClause != null" >
+      where ${whereClause}
+    </if>
+    <if test="orderByClause != null" >
+      order by ${orderByClause}
+    </if>
+  </select>
+
+  <update id="setRead" parameterType="selleck.email.pojo.YellowPage" >
+    update search_yellowpage_by_keyword
+	set have_read = 1
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  
+  <update id="updateYellowPage" parameterType="selleck.email.pojo.YellowPage" >
+    update search_yellowpage_by_keyword
+	set 
+	title = #{title,jdbcType=VARCHAR} , keyword = #{keyword,jdbcType=VARCHAR}, near = #{near,jdbcType=VARCHAR},
+	country = #{country,jdbcType=VARCHAR},address = #{address,jdbcType=LONGVARCHAR} ,email = #{email,jdbcType=VARCHAR} ,
+	telephone = #{telephone,jdbcType=VARCHAR} , website = #{website,jdbcType=VARCHAR} , url = #{url,jdbcType=VARCHAR},
+	`Social Links` = #{socialLinks,jdbcType=VARCHAR},`Services/Products` = #{servicesProducts,jdbcType=VARCHAR},Neighborhoods = #{neighborhoods,jdbcType=VARCHAR},
+	Hours = #{hours,jdbcType=VARCHAR},`Payment method` = #{paymentMethod,jdbcType=VARCHAR},`General Info` = #{generalInfo,jdbcType=VARCHAR},
+	Location = #{location,jdbcType=VARCHAR},`Price Range` = #{priceRange,jdbcType=VARCHAR},`Extra Phones` = #{extraPhones,jdbcType=VARCHAR},
+	Brands = #{brands,jdbcType=VARCHAR},Categories = #{categories,jdbcType=VARCHAR},Languages = #{languages,jdbcType=VARCHAR},
+	Accreditation = #{accreditation,jdbcType=VARCHAR},`Other Links` = #{otherlinks,jdbcType=VARCHAR},AKA = #{aka,jdbcType=VARCHAR},
+	Amenities = #{amenities,jdbcType=VARCHAR},Associations = #{associations,jdbcType=VARCHAR},`Other Email` = #{otherEmail,jdbcType=VARCHAR}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  
+  <insert id="saveYellowPage" parameterType="selleck.email.pojo.YellowPage" useGeneratedKeys="true" keyProperty="id">
+    insert ignore into search_yellowpage_by_keyword (title,keyword,near,country,address,email,telephone,website,url,
+   		`Social Links`,`Services/Products`,Neighborhoods,Hours,`Payment method`,`General Info`,Location,`Price Range`,`Extra Phones`,Brands,Categories,Languages,Accreditation,`Other Links`,AKA,Amenities,Associations,`Other Email`
+      )
+    values (#{title,jdbcType=VARCHAR}, #{keyword,jdbcType=VARCHAR}, #{near,jdbcType=VARCHAR}, #{country,jdbcType=VARCHAR},
+    	#{address,jdbcType=VARCHAR}, #{email,jdbcType=VARCHAR}, 
+    	#{telephone,jdbcType=VARCHAR}, #{website,jdbcType=VARCHAR},#{url,jdbcType=VARCHAR},
+    	#{socialLinks,jdbcType=VARCHAR},#{servicesProducts,jdbcType=VARCHAR},#{neighborhoods,jdbcType=VARCHAR},
+		#{hours,jdbcType=VARCHAR},#{paymentMethod,jdbcType=VARCHAR},#{generalInfo,jdbcType=VARCHAR},
+		#{location,jdbcType=VARCHAR},#{priceRange,jdbcType=VARCHAR},#{extraPhones,jdbcType=VARCHAR},
+		#{brands,jdbcType=VARCHAR},#{categories,jdbcType=VARCHAR},#{languages,jdbcType=VARCHAR},
+		#{accreditation,jdbcType=VARCHAR},#{otherlinks,jdbcType=VARCHAR},#{aka,jdbcType=VARCHAR},
+		#{amenities,jdbcType=VARCHAR},#{associations,jdbcType=VARCHAR},#{otherEmail,jdbcType=VARCHAR}
+      )
+  </insert>
+
+</mapper>

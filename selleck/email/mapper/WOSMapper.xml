@@ -1,0 +1,258 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="selleck.email.dao.WOSMapper">
+	<resultMap id="BaseResultMap" type="selleck.email.pojo.WOS">
+		<id column="ID" property="id" jdbcType="INTEGER" />
+		<result column="title" property="title" jdbcType="VARCHAR" />
+		<result column="abstract" property="abs" jdbcType="LONGVARCHAR" />
+		<result column="keyword" property="keyword" jdbcType="VARCHAR" />
+		<result column="KEY_PLUS" property="keywordPlus" jdbcType="VARCHAR" />
+		<result column="CORRESPONDINGAUTHOR" property="correspondingAuthor" jdbcType="LONGVARCHAR" />
+		<result column="CORRESPONDINGADDRESS" property="correspondingAddress" jdbcType="LONGVARCHAR" />
+		<result column="AUTHORS" property="authors" jdbcType="LONGVARCHAR" />
+		<result column="ADDRESSES" property="addresses" jdbcType="LONGVARCHAR" />
+		<result column="email" property="email" jdbcType="VARCHAR" />
+		<result column="SOURCE_PUBLICATION" property="sourcePublication" jdbcType="VARCHAR" />
+		<result column="PDATE" property="pDate" jdbcType="VARCHAR" />
+		<result column="type" property="type" jdbcType="VARCHAR" />
+		<result column="classification" property="classification" jdbcType="VARCHAR" />
+		<result column="research" property="research" jdbcType="VARCHAR" />
+		<result column="have_read" property="haveRead" jdbcType="TINYINT" />
+	</resultMap>
+	<resultMap id="searchRecordWOS" type="selleck.email.pojo.WOS">
+		<id column="ID" property="id" jdbcType="INTEGER" />
+		<result column="title" property="title" jdbcType="VARCHAR" />
+		<result column="abstract" property="abs" jdbcType="LONGVARCHAR" />
+		<result column="KEYWORDS" property="keyword" jdbcType="VARCHAR" />
+		<result column="CORRESPONDINGAUTHOR" property="correspondingAuthor" jdbcType="LONGVARCHAR" />
+		<result column="CORRESPONDINGADDRESS" property="correspondingAddress" jdbcType="LONGVARCHAR" />
+		<result column="AUTHORS" property="authors" jdbcType="LONGVARCHAR" />
+		<result column="ADDRESSES" property="addresses" jdbcType="LONGVARCHAR" />
+		<result column="email" property="email" jdbcType="VARCHAR" />
+		<result column="JOURNAL" property="sourcePublication" jdbcType="VARCHAR" />
+		<result column="PUBLICTIME" property="pDate" jdbcType="VARCHAR" />
+		<result column="parsed" property="haveRead" jdbcType="TINYINT" />
+		<result column="ResearchAreas" property="research" jdbcType="VARCHAR" />
+		<result column="ScienceCategories" property="classification" jdbcType="VARCHAR" />
+		<result column="DocumentType" property="type" jdbcType="VARCHAR" />
+	</resultMap>
+    
+    <sql id="Example_Where_Clause" >
+    <trim prefix="where" prefixOverrides="and|or" >
+      <if test="condition.email != null" >
+         and email = #{condition.email}
+      </if>
+      <if test="condition.have_read != null" >
+         and have_read = #{condition.have_read}
+      </if>
+    </trim>
+  </sql>
+  	
+  	<sql id="Base_Column_List">
+		ID,title,abstract,keyword,KEY_PLUS,CORRESPONDINGAUTHOR,CORRESPONDINGADDRESS,AUTHORS,ADDRESSES,
+		email,SOURCE_PUBLICATION,PDATE,type,classification,research,have_read
+  	</sql>
+  	
+	<sql id="SearchRecord_Column_List">
+		ID,title,abstract,KEYWORDS,CORRESPONDINGAUTHOR,CORRESPONDINGADDRESS,AUTHORS,ADDRESSES,
+		email,JOURNAL,PUBLICTIME,parsed,ResearchAreas,ScienceCategories,DocumentType
+  	</sql>
+  	
+  	<select id="selectByExample" resultMap="BaseResultMap" parameterType="common.handle.model.Criteria" >
+    select
+    <if test="distinct" >
+      distinct
+    </if>
+    <include refid="Base_Column_List" />
+    from search_wos_by_publication
+    <if test="whereClause != null" >
+      where ${whereClause}
+    </if>
+    <if test="orderByClause != null" >
+      order by ${orderByClause}
+    </if>
+  </select>
+  
+  <select id="selectFromSearchRecord" resultMap="searchRecordWOS" parameterType="common.handle.model.Criteria" >
+    select
+    <if test="distinct" >
+      distinct
+    </if>
+    <include refid="SearchRecord_Column_List" />
+    from emailhunter.search_record
+    <if test="whereClause != null" >
+      where ${whereClause}
+    </if>
+    <if test="orderByClause != null" >
+      order by ${orderByClause}
+    </if>
+  </select>
+  
+  <select id="findAddressByAuthorName" resultType="string" parameterType="common.handle.model.Criteria" >
+    select
+    	ADDRESS
+    from emailselleck.author_email_suffix
+    <if test="whereClause != null" >
+      where ${whereClause}
+    </if>
+    <if test="orderByClause != null" >
+      order by ${orderByClause}
+    </if>
+  </select>
+  
+  <select id="selectByEmail" resultMap="BaseResultMap" parameterType="common.handle.model.Criteria" >
+    <include refid="common.MySql_Pagination_Head" />
+    select
+    <if test="distinct" >
+      distinct
+    </if>
+   ID,title,abstract,keyword,CORRESPONDINGAUTHOR,CORRESPONDINGADDRESS,AUTHORS,ADDRESSES,
+		email,SOURCE_PUBLICATION,PDATE,type,classification,research
+    from search_wos_all_attributes
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+    <if test="orderByClause != null" >
+      order by ${orderByClause}
+    </if>
+    <include refid="common.MySql_Pagination_Tail" />
+  </select>
+  
+  <select id="selectNewEmail" resultType="java.lang.String" parameterType="common.handle.model.Criteria" >
+    <include refid="common.MySql_Pagination_Head" />
+    select 
+    <if test="distinct" >
+      distinct
+    </if>
+    email
+    from t_wos_new_email
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+    <if test="orderByClause != null" >
+      order by ${orderByClause}
+    </if>
+    <include refid="common.MySql_Pagination_Tail" />
+  </select>
+  
+ <update id="updateArticle" parameterType="map" >
+    update base_fields
+    <set >
+      <if test="record.fieldId != null" >
+        FIELD_ID = #{record.fieldId},
+      </if>
+      <if test="record.field != null" >
+        FIELD = #{record.field},
+      </if>
+      <if test="record.fieldName != null" >
+        FIELD_NAME = #{record.fieldName},
+      </if>
+      <if test="record.valueField != null" >
+        VALUE_FIELD = #{record.valueField},
+      </if>
+      <if test="record.displayField != null" >
+        DISPLAY_FIELD = #{record.displayField},
+      </if>
+      <if test="record.enabled != null" >
+        ENABLED = #{record.enabled},
+      </if>
+      <if test="record.sort != null" >
+        SORT = #{record.sort},
+      </if>
+      <if test="record.needLocale != null" >
+        NEED_LOCALE = #{record.needLocale},
+      </if>
+    </set>
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+  </update>
+  
+  <update id="updateNewEmail" parameterType="selleck.email.pojo.NewEmail" >
+    update t_wos_new_email
+	set full_name = #{fullName,jdbcType=VARCHAR}
+    where email = #{email,jdbcType=VARCHAR}
+  </update>
+  
+  <update id="setRead" parameterType="selleck.email.pojo.WOS" >
+    update search_wos_by_publication
+	set have_read = 1
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  
+  <update id="setSearchRecordRead" parameterType="selleck.email.pojo.WOS" >
+    update emailhunter.search_record
+	set parsed = 1
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  
+  <insert id="saveWOS" parameterType="selleck.email.pojo.WOS" useGeneratedKeys="true" keyProperty="id">
+    insert ignore into search_wos_by_publication ( title, ABSTRACT,AUTHORS,ADDRESSES, KEYWORD,KEY_PLUS,email,CORRESPONDINGAUTHOR,CORRESPONDINGADDRESS,SOURCE_PUBLICATION,pDate,type,classification,research
+      )
+    values ( #{title,jdbcType=LONGVARCHAR},#{abs,jdbcType=LONGVARCHAR},#{authors,jdbcType=LONGVARCHAR},#{addresses,jdbcType=LONGVARCHAR},
+      #{keyword,jdbcType=VARCHAR},#{keywordPlus,jdbcType=VARCHAR},#{email,jdbcType=VARCHAR},#{correspondingAuthor,jdbcType=VARCHAR},#{correspondingAddress,jdbcType=LONGVARCHAR},
+      #{sourcePublication,jdbcType=VARCHAR}, #{pDate,jdbcType=VARCHAR}, #{type,jdbcType=VARCHAR},#{classification,jdbcType=VARCHAR},
+      #{research,jdbcType=VARCHAR}
+      )
+  </insert>
+  <insert id="saveWOSByKeyword" parameterType="selleck.email.pojo.WOS" useGeneratedKeys="true" keyProperty="id">
+    insert ignore into search_wos_by_keyword ( title, ABSTRACT,AUTHORS,ADDRESSES, KEYWORD,KEY_PLUS,email,CORRESPONDINGAUTHOR,CORRESPONDINGADDRESS,SOURCE_PUBLICATION,pDate,type,classification,research,searchKeyword
+      )
+    values ( #{title,jdbcType=LONGVARCHAR},#{abs,jdbcType=LONGVARCHAR},#{authors,jdbcType=LONGVARCHAR},#{addresses,jdbcType=LONGVARCHAR},
+      #{keyword,jdbcType=VARCHAR},#{keywordPlus,jdbcType=VARCHAR},#{email,jdbcType=VARCHAR},#{correspondingAuthor,jdbcType=VARCHAR},#{correspondingAddress,jdbcType=LONGVARCHAR},
+      #{sourcePublication,jdbcType=VARCHAR}, #{pDate,jdbcType=VARCHAR}, #{type,jdbcType=VARCHAR},#{classification,jdbcType=VARCHAR},
+      #{research,jdbcType=VARCHAR},#{searchKeyword,jdbcType=VARCHAR}
+      )
+  </insert>
+  
+  <insert id="insertArticle" parameterType="selleck.email.pojo.Article" useGeneratedKeys="true" keyProperty="id">
+    insert into selleck_edm_article ( title, TITLE_INDEX, ABSTRACT, KEYWORD,KEY_PLUS,email,CORRESPONDINGAUTHOR,CORRESPONDINGADDRESS,
+    	SOURCE_PUBLICATION,pDate,type,classification,research,source,FULLCORRESPONDINGAUTHOR
+      )
+    values ( #{title,jdbcType=LONGVARCHAR}, #{titleIndex,jdbcType=VARCHAR}, 
+      #{abs,jdbcType=LONGVARCHAR}, #{keyword,jdbcType=VARCHAR},#{keywordPlus,jdbcType=VARCHAR},#{email,jdbcType=VARCHAR},#{correspondingAuthor,jdbcType=VARCHAR},#{correspondingAddress,jdbcType=LONGVARCHAR},
+      #{sourcePublication,jdbcType=VARCHAR}, #{pDate,jdbcType=VARCHAR}, #{type,jdbcType=VARCHAR},#{classification,jdbcType=VARCHAR},
+       #{research,jdbcType=VARCHAR}, #{source,jdbcType=VARCHAR},#{fullCorrespondingAuthor,jdbcType=VARCHAR}
+      )
+  </insert>
+  
+  <insert id="insertAuthor" parameterType="selleck.email.pojo.Author" useGeneratedKeys="true" keyProperty="id">
+    insert into selleck_edm_author ( full_name, short_name, address, organization,EMAIL,SOURCE
+      )
+    values (#{fullName,jdbcType=VARCHAR}, #{shortName,jdbcType=VARCHAR}, 
+      #{address,jdbcType=VARCHAR}, #{organization,jdbcType=VARCHAR},#{email,jdbcType=VARCHAR},#{source,jdbcType=VARCHAR}
+      )
+  </insert>
+  
+  <insert id="insertArticleAuthorRel" parameterType="selleck.email.pojo.ArticleAuthorRel">
+    insert into selleck_edm_article_author_rel (author_id, article_id , priority
+      )
+    values (#{authorId,jdbcType=INTEGER}, #{articleId,jdbcType=INTEGER}, #{priority,jdbcType=INTEGER}
+      )
+  </insert>
+  
+  <insert id="insertArticleNotUseDB" parameterType="selleck.email.pojo.Article" useGeneratedKeys="true" keyProperty="id">
+    insert into emailhunter.selleck_edm_article ( title, TITLE_INDEX, ABSTRACT, KEYWORD,KEY_PLUS,email,CORRESPONDINGAUTHOR,CORRESPONDINGADDRESS,SOURCE_PUBLICATION,pDate,type,classification,research,source
+      )
+    values ( #{title,jdbcType=LONGVARCHAR}, #{titleIndex,jdbcType=VARCHAR}, 
+      #{abs,jdbcType=LONGVARCHAR}, #{keyword,jdbcType=VARCHAR},#{keywordPlus,jdbcType=VARCHAR},#{email,jdbcType=VARCHAR},#{correspondingAuthor,jdbcType=VARCHAR},#{correspondingAddress,jdbcType=LONGVARCHAR},
+      #{sourcePublication,jdbcType=VARCHAR}, #{pDate,jdbcType=VARCHAR}, #{type,jdbcType=VARCHAR},#{classification,jdbcType=VARCHAR},
+       #{research,jdbcType=VARCHAR}, #{source,jdbcType=VARCHAR}
+      )
+  </insert>
+  
+  <insert id="insertAuthorNotUseDB" parameterType="selleck.email.pojo.Author" useGeneratedKeys="true" keyProperty="id">
+    insert into emailhunter.selleck_edm_author ( full_name, short_name, address, organization,EMAIL,SOURCE
+      )
+    values (#{fullName,jdbcType=VARCHAR}, #{shortName,jdbcType=VARCHAR}, 
+      #{address,jdbcType=VARCHAR}, #{organization,jdbcType=VARCHAR},#{email,jdbcType=VARCHAR},#{source,jdbcType=VARCHAR}
+      )
+  </insert>
+  
+  <insert id="insertArticleAuthorRelNotUseDB" parameterType="selleck.email.pojo.ArticleAuthorRel">
+    insert into emailhunter.selleck_edm_article_author_rel (author_id, article_id , priority
+      )
+    values (#{authorId,jdbcType=INTEGER}, #{articleId,jdbcType=INTEGER}, #{priority,jdbcType=INTEGER}
+      )
+  </insert>
+</mapper>

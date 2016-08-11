@@ -1,0 +1,162 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="selleck.email.dao.WileyMapper">
+	<resultMap id="BaseResultMap" type="selleck.email.pojo.Wiley">
+		<id column="ID" property="id" jdbcType="INTEGER" />
+		<result column="title" property="title" jdbcType="VARCHAR" />
+		<result column="PublicationDate" property="publicationDate" jdbcType="VARCHAR" />
+		<result column="ABSTRACT" property="abs" jdbcType="LONGVARCHAR" />
+		<result column="KEYWORD" property="keyword" jdbcType="VARCHAR" />
+		<result column="CORRESPONDINGAUTHOR" property="correspondingAuthor" jdbcType="VARCHAR" />
+		<result column="CORRESPONDINGADDRESS" property="correspondingAddress" jdbcType="VARCHAR" />
+		<result column="AUTHORS" property="authors" jdbcType="LONGVARCHAR" />
+		<result column="ADDRESSES" property="addresses" jdbcType="LONGVARCHAR" />
+		<result column="EMAIL" property="email" jdbcType="VARCHAR" />
+		<result column="JOURNAL" property="journal" jdbcType="VARCHAR" />
+		<result column="TYPE" property="type" jdbcType="VARCHAR" />
+		<result column="url" property="url" jdbcType="VARCHAR" />
+		<result column="full_text" property="fullText" jdbcType="LONGVARCHAR" />
+		<result column="reference" property="reference" jdbcType="LONGVARCHAR" />
+		<result column="fulltext_url" property="fullTextUrl" jdbcType="VARCHAR" />
+		<result column="have_read" property="haveRead" jdbcType="TINYINT" />	
+	</resultMap>
+	
+	<resultMap id="searchRecordWiley" type="selleck.email.pojo.Wiley">
+		<id column="ID" property="id" jdbcType="INTEGER" />
+		<result column="title" property="title" jdbcType="VARCHAR" />
+		<result column="abstract" property="abs" jdbcType="LONGVARCHAR" />
+		<result column="KEYWORDS" property="keyword" jdbcType="VARCHAR" />
+		<result column="CORRESPONDINGAUTHOR" property="correspondingAuthor" jdbcType="LONGVARCHAR" />
+		<result column="CORRESPONDINGADDRESS" property="correspondingAddress" jdbcType="LONGVARCHAR" />
+		<result column="AUTHORS" property="authors" jdbcType="LONGVARCHAR" />
+		<result column="ADDRESSES" property="addresses" jdbcType="LONGVARCHAR" />
+		<result column="email" property="email" jdbcType="VARCHAR" />
+		<result column="JOURNAL" property="journal" jdbcType="VARCHAR" />
+		<result column="PUBLICTIME" property="publicationDate" jdbcType="VARCHAR" />
+		<result column="parsed" property="haveRead" jdbcType="TINYINT" />
+		<result column="DocumentType" property="type" jdbcType="VARCHAR" />
+	</resultMap>
+    
+    <sql id="Example_Where_Clause" >
+    <trim prefix="where" prefixOverrides="and|or" >
+      <if test="condition.email != null" >
+         and email = #{condition.email}
+      </if>
+      <if test="condition.have_read != null" >
+         and have_read = #{condition.have_read}
+      </if>
+    </trim>
+  </sql>
+  	
+  	<sql id="Base_Column_List">
+		ID,TITLE,PublicationDate,AUTHORS,ADDRESSES,CORRESPONDINGAUTHOR,CORRESPONDINGADDRESS,EMAIL,JOURNAL,
+		ABSTRACT,KEYWORD,TYPE,url,reference,full_text,fulltext_url,have_read
+  	</sql>
+  	
+  	<sql id="SearchRecord_Column_List">
+		ID,title,abstract,KEYWORDS,CORRESPONDINGAUTHOR,CORRESPONDINGADDRESS,AUTHORS,ADDRESSES,
+		email,JOURNAL,PUBLICTIME,parsed,ResearchAreas,ScienceCategories,DocumentType
+  	</sql>
+  	
+  	<select id="selectFromSearchPublication" resultMap="BaseResultMap" parameterType="common.handle.model.Criteria" >
+    select
+    <if test="distinct" >
+      distinct
+    </if>
+    <include refid="Base_Column_List" />
+    from search_wiley_by_publication
+    <if test="whereClause != null" >
+      where ${whereClause}
+    </if>
+    <if test="orderByClause != null" >
+      order by ${orderByClause}
+    </if>
+  </select>
+  
+  <select id="selectFromSearchRecord" resultMap="searchRecordWiley" parameterType="common.handle.model.Criteria" >
+    select
+    <if test="distinct" >
+      distinct
+    </if>
+    <include refid="SearchRecord_Column_List" />
+    from search_record
+    <if test="whereClause != null" >
+      where ${whereClause}
+    </if>
+    <if test="orderByClause != null" >
+      order by ${orderByClause}
+    </if>
+  </select>
+
+  <update id="setRead" parameterType="selleck.email.pojo.Wiley" >
+    update search_wiley_by_publication
+	set have_read = 1
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  
+  <update id="setSearchRecordRead" parameterType="selleck.email.pojo.Wiley" >
+    update search_record
+	set parsed = 1
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  
+  <update id="updateWiley" parameterType="selleck.email.pojo.Wiley" >
+    update search_wiley_by_publication
+	set 
+	TITLE = #{title,jdbcType=VARCHAR} , ABSTRACT = #{abs,jdbcType=LONGVARCHAR} , KEYWORD = #{keyword,jdbcType=VARCHAR} , CORRESPONDINGAUTHOR = #{correspondingAuthor,jdbcType=VARCHAR},
+	AUTHORS = #{authors,jdbcType=LONGVARCHAR}, ADDRESSES = #{addresses,jdbcType=LONGVARCHAR} , EMAIL = #{email,jdbcType=VARCHAR} , JOURNAL = #{journal,jdbcType=VARCHAR},
+	PublicationDate = #{publicationDate,jdbcType=VARCHAR} , url = #{url,jdbcType=VARCHAR} , CORRESPONDINGADDRESS = #{correspondingAddress,jdbcType=VARCHAR} , full_text = #{fullText,jdbcType=LONGVARCHAR},
+	reference = #{reference,jdbcType=LONGVARCHAR} , fulltext_url = #{fullTextUrl,jdbcType=VARCHAR} , TYPE = #{type,jdbcType=VARCHAR}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  
+  <insert id="saveWiley" parameterType="selleck.email.pojo.Wiley" useGeneratedKeys="true" keyProperty="id">
+    insert ignore into search_wiley_by_publication ( TITLE, ABSTRACT, KEYWORD, CORRESPONDINGAUTHOR,CORRESPONDINGADDRESS,AUTHORS,ADDRESSES,
+    	EMAIL,JOURNAL,PublicationDate,TYPE,reference,full_text,url,fulltext_url
+      )
+    values (#{title,jdbcType=VARCHAR}, #{abs,jdbcType=LONGVARCHAR}, #{keyword,jdbcType=VARCHAR}, #{correspondingAuthor,jdbcType=LONGVARCHAR}, #{correspondingAddress,jdbcType=LONGVARCHAR}, 
+      #{authors,jdbcType=LONGVARCHAR}, #{addresses,jdbcType=LONGVARCHAR},#{email,jdbcType=VARCHAR},#{journal,jdbcType=VARCHAR},
+      #{publicationDate,jdbcType=VARCHAR},#{type,jdbcType=VARCHAR},#{reference,jdbcType=LONGVARCHAR}, #{fullText,jdbcType=VARCHAR},
+      #{url,jdbcType=VARCHAR},#{fullTextUrl,jdbcType=VARCHAR}
+      )
+  </insert>
+  
+  <insert id="saveWileyByKeyword" parameterType="selleck.email.pojo.Wiley" useGeneratedKeys="true" keyProperty="id">
+    insert ignore into search_wiley_by_keyword ( TITLE, ABSTRACT, KEYWORD, CORRESPONDINGAUTHOR,CORRESPONDINGADDRESS,AUTHORS,ADDRESSES,
+    	EMAIL,JOURNAL,PublicationDate,TYPE,reference,full_text,url,fulltext_url,searchKeyword
+      )
+    values (#{title,jdbcType=VARCHAR}, #{abs,jdbcType=LONGVARCHAR}, #{keyword,jdbcType=VARCHAR}, #{correspondingAuthor,jdbcType=LONGVARCHAR}, #{correspondingAddress,jdbcType=LONGVARCHAR}, 
+      #{authors,jdbcType=LONGVARCHAR}, #{addresses,jdbcType=LONGVARCHAR},#{email,jdbcType=VARCHAR},#{journal,jdbcType=VARCHAR},
+      #{publicationDate,jdbcType=VARCHAR},#{type,jdbcType=VARCHAR},#{reference,jdbcType=LONGVARCHAR}, #{fullText,jdbcType=VARCHAR},
+      #{url,jdbcType=VARCHAR},#{fullTextUrl,jdbcType=VARCHAR},#{searchKeyword,jdbcType=VARCHAR}
+      )
+  </insert>
+  
+  <insert id="insertArticle" parameterType="selleck.email.pojo.Article" useGeneratedKeys="true" keyProperty="id">
+    insert into selleck_edm_article ( title, TITLE_INDEX, ABSTRACT, KEYWORD,email,CORRESPONDINGAUTHOR,CORRESPONDINGADDRESS,SOURCE_PUBLICATION,pDate,source,
+    	FULLCORRESPONDINGAUTHOR, type, referrence,full_text,CORRESPONDING_INFO
+      )
+    values ( #{title,jdbcType=LONGVARCHAR}, #{titleIndex,jdbcType=VARCHAR}, 
+      #{abs,jdbcType=LONGVARCHAR}, #{keyword,jdbcType=VARCHAR},#{email,jdbcType=VARCHAR},#{correspondingAuthor,jdbcType=VARCHAR},#{correspondingAddress,jdbcType=LONGVARCHAR},
+      #{sourcePublication,jdbcType=VARCHAR}, #{pDate,jdbcType=VARCHAR},
+      #{source,jdbcType=VARCHAR}, #{fullCorrespondingAuthor,jdbcType=VARCHAR},#{type,jdbcType=VARCHAR},
+      #{referrence,jdbcType=LONGVARCHAR},#{fullText,jdbcType=LONGVARCHAR},#{correspondingInfo,jdbcType=LONGVARCHAR}
+      )
+  </insert>
+  
+  <insert id="insertAuthor" parameterType="selleck.email.pojo.Author" useGeneratedKeys="true" keyProperty="id">
+    insert into selleck_edm_author ( full_name, short_name, address, organization,EMAIL,SOURCE
+      )
+    values (#{fullName,jdbcType=VARCHAR}, #{shortName,jdbcType=VARCHAR}, 
+      #{address,jdbcType=VARCHAR}, #{organization,jdbcType=VARCHAR},#{email,jdbcType=VARCHAR},#{source,jdbcType=VARCHAR}
+      )
+  </insert>
+  
+  <insert id="insertArticleAuthorRel" parameterType="selleck.email.pojo.ArticleAuthorRel">
+    insert into selleck_edm_article_author_rel (author_id, article_id , priority
+      )
+    values (#{authorId,jdbcType=INTEGER}, #{articleId,jdbcType=INTEGER}, #{priority,jdbcType=INTEGER}
+      )
+  </insert>
+
+</mapper>

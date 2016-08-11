@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="selleck.email.dao.GoogleSearchEmailMapper">
+	<resultMap id="BaseResultMap" type="selleck.email.pojo.GoogleSearchEmail">
+		<id column="ID" property="id" jdbcType="INTEGER" />
+		<result column="data_id" property="dataId" jdbcType="INTEGER" />
+		<result column="email_mark" property="emailMark" jdbcType="VARCHAR" />
+		<result column="full_author" property="fullAuthor" jdbcType="VARCHAR" />
+		<result column="all_email" property="allEmail" jdbcType="VARCHAR" />
+		<result column="get_email" property="getEmail" jdbcType="VARCHAR" />
+		<result column="score" property="score" jdbcType="INTEGER" />
+		<result column="date_time" property="dateTime" jdbcType="VARCHAR" />
+	</resultMap>
+    
+    <sql id="Example_Where_Clause" >
+    <trim prefix="where" prefixOverrides="and|or" >
+      <if test="condition.email != null" >
+         and email = #{condition.email}
+      </if>
+      <if test="condition.have_read != null" >
+         and have_read = #{condition.have_read}
+      </if>
+    </trim>
+  </sql>
+  	
+  	<sql id="Base_Column_List">
+		id,data_id,email_mark,full_author,all_email,get_email,score,date_time
+  	</sql>
+  	
+  	<select id="selectGSEmailByCriteria" resultMap="BaseResultMap" parameterType="common.handle.model.Criteria" >
+    select
+    <if test="distinct" >
+      distinct
+    </if>
+    <include refid="Base_Column_List" />
+    from emailselleck.google_search_email
+    <if test="whereClause != null" >
+      where ${whereClause}
+    </if>
+    <if test="orderByClause != null" >
+      order by ${orderByClause}
+    </if>
+  </select>
+  
+ <update id="updateArticle" parameterType="map" >
+    update base_fields
+    <set >
+      <if test="record.fieldId != null" >
+        FIELD_ID = #{record.fieldId},
+      </if>
+      <if test="record.field != null" >
+        FIELD = #{record.field},
+      </if>
+      <if test="record.fieldName != null" >
+        FIELD_NAME = #{record.fieldName},
+      </if>
+      <if test="record.valueField != null" >
+        VALUE_FIELD = #{record.valueField},
+      </if>
+      <if test="record.displayField != null" >
+        DISPLAY_FIELD = #{record.displayField},
+      </if>
+      <if test="record.enabled != null" >
+        ENABLED = #{record.enabled},
+      </if>
+      <if test="record.sort != null" >
+        SORT = #{record.sort},
+      </if>
+      <if test="record.needLocale != null" >
+        NEED_LOCALE = #{record.needLocale},
+      </if>
+    </set>
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+  </update>
+  
+  <update id="updateGoogleSearch" parameterType="selleck.email.pojo.GoogleSearch" >
+    update emailselleck.google_search
+	set real_id = #{realId,jdbcType=VARCHAR} , full_author = #{fullAuthor,jdbcType=VARCHAR}
+    where id = #{id,jdbcType=VARCHAR}
+  </update>
+  
+  <update id="updateFullAuthor" parameterType="selleck.email.pojo.GoogleSearch" >
+    update emailselleck.google_search_email
+	set full_author = #{fullAuthor,jdbcType=VARCHAR}
+    where id = #{id,jdbcType=VARCHAR}
+  </update>
+  
+  <update id="updateGetEmail" parameterType="selleck.email.pojo.GoogleSearch" >
+    update emailselleck.google_search_email
+	set get_email = #{getEmail,jdbcType=VARCHAR} , score = #{score,jdbcType=INTEGER} , date_time = #{dateTime,jdbcType=VARCHAR}
+    where id = #{id,jdbcType=VARCHAR}
+  </update>
+  
+  <insert id="insertArticle" parameterType="selleck.email.pojo.Article" useGeneratedKeys="true" keyProperty="id">
+    insert into selleck_edm_article ( title, TITLE_INDEX, ABSTRACT, KEYWORD,KEY_PLUS,email,CORRESPONDINGAUTHOR,CORRESPONDINGADDRESS,SOURCE_PUBLICATION,pDate,type,classification,research,source
+      )
+    values ( #{title,jdbcType=LONGVARCHAR}, #{titleIndex,jdbcType=VARCHAR}, 
+      #{abs,jdbcType=LONGVARCHAR}, #{keyword,jdbcType=VARCHAR},#{keywordPlus,jdbcType=VARCHAR},#{email,jdbcType=VARCHAR},#{correspondingAuthor,jdbcType=VARCHAR},#{correspondingAddress,jdbcType=LONGVARCHAR},
+      #{sourcePublication,jdbcType=VARCHAR}, #{pDate,jdbcType=VARCHAR}, #{type,jdbcType=VARCHAR},#{classification,jdbcType=VARCHAR},
+       #{research,jdbcType=VARCHAR}, #{source,jdbcType=VARCHAR}
+      )
+  </insert>
+
+</mapper>

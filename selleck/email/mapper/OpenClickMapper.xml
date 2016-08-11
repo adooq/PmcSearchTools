@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="selleck.email.dao.OpenClickMapper">
+	<resultMap id="BaseResultMap" type="selleck.email.pojo.OpenClick">
+		<result column="email" property="email" jdbcType="VARCHAR" />
+		<result column="interest" property="interest" jdbcType="VARCHAR" />
+	</resultMap>
+    
+  
+	<sql id="Base_Column_List">
+		email, interest
+  	</sql>
+  	
+  	<select id="selectByExample" resultMap="BaseResultMap" parameterType="common.handle.model.Criteria" >
+    select
+    <if test="distinct" >
+      distinct
+    </if>
+    <include refid="Base_Column_List" />
+    from selleck_edm_openclick
+    <if test="whereClause != null" >
+      where ${whereClause}
+    </if>
+    <if test="orderByClause != null" >
+      order by ${orderByClause}
+    </if>
+  </select>
+  
+  <insert id="updateEmailTasks" parameterType="selleck.email.pojo.EmailTask">
+    replace into selleck_edm_email_tasks ( email_id, title , keywords , date  )
+   	 values ( #{emailId,jdbcType=VARCHAR}, #{title,jdbcType=VARCHAR}, #{keywords,jdbcType=VARCHAR}, #{date,jdbcType=VARCHAR}
+      )
+  </insert>
+  
+  <insert id="insertOpen" parameterType="selleck.email.pojo.OpenClick">
+    insert ignore into selleck_edm_user_open ( campaignId, email , datetime , ip  )
+   	 values ( #{campaignId,jdbcType=VARCHAR}, #{email,jdbcType=VARCHAR}, #{time,jdbcType=VARCHAR}, #{ip,jdbcType=VARCHAR}
+      )
+  </insert>
+  
+  <insert id="insertClick" parameterType="selleck.email.pojo.OpenClick">
+    insert ignore into selleck_edm_user_click  ( campaignId, email , datetime , ip , url )
+   	 values ( #{campaignId,jdbcType=VARCHAR}, #{email,jdbcType=VARCHAR}, #{time,jdbcType=VARCHAR}, #{ip,jdbcType=VARCHAR},#{url,jdbcType=VARCHAR}
+      )
+  </insert>
+  
+  <insert id="insertHardBounce" parameterType="java.lang.String">
+    insert ignore into selleck_edm_invalid_email (  email , flag)
+   	 values ( '${value}' , 2
+      )
+  </insert>
+  
+  <insert id="insertSoftBounce" parameterType="java.lang.String">
+    insert ignore into selleck_edm_invalid_email (  email , flag)
+   	 values ( '${value}' , 3
+      )
+  </insert>
+  
+  <insert id="insertUnsubscribe" parameterType="java.lang.String">
+    insert ignore into selleck_edm_invalid_email ( email , flag)
+   	 values ( '${value}' , 0
+      )
+  </insert>
+  
+  <insert id="insertUnopen" parameterType="java.lang.String">
+    insert ignore into selleck_edm_invalid_email (  email , flag)
+   	 values ( '${value}' , 4
+      )
+  </insert>
+</mapper>

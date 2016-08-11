@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="selleck.email.dao.GoogleRecordMapper">
+	<resultMap id="BaseResultMap" type="selleck.email.pojo.GoogleRecord">
+		<id column="ID" property="id" jdbcType="INTEGER" />
+		<result column="title_id" property="big" jdbcType="INTEGER" />
+		<result column="html_title" property="htmlTitle" jdbcType="VARCHAR" />
+		<result column="title" property="title" jdbcType="VARCHAR" />
+		<result column="keywords" property="keywords" jdbcType="VARCHAR" />
+		<result column="author" property="shortName" jdbcType="VARCHAR" />
+		<result column="full_author" property="fullName" jdbcType="VARCHAR" />
+		<result column="address" property="address" jdbcType="VARCHAR" />
+		<result column="email" property="email" jdbcType="VARCHAR" />
+		<result column="pick_date" property="pickDate" jdbcType="VARCHAR" />
+		<result column="match_keys" property="matchKeys" jdbcType="VARCHAR" />
+		<result column="interests" property="interests" jdbcType="VARCHAR" />
+		<result column="product" property="product" jdbcType="INTEGER" />
+		<result column="small" property="small" jdbcType="INTEGER" />
+		<result column="big" property="big" jdbcType="INTEGER" />
+		<result column="dict_keys" property="dictKeys" jdbcType="VARCHAR" />
+		<result column="sourcees" property="source" jdbcType="VARCHAR" />
+	</resultMap>
+    
+    <sql id="Example_Where_Clause" >
+    <trim prefix="where" prefixOverrides="and|or" >
+      <if test="condition.email != null" >
+         and email = #{condition.email}
+      </if>
+      <if test="condition.have_read != null" >
+         and have_read = #{condition.have_read}
+      </if>
+    </trim>
+  </sql>
+  	
+  	<sql id="Base_Column_List">
+		id,title_id,html_title,title,keywords,author,full_author,address,email,pick_date,match_keys,interests,product,small,big,dict_keys
+  	</sql>
+  	
+  	<select id="selectByCriteria" resultMap="BaseResultMap" parameterType="common.handle.model.Criteria" >
+    select
+    <if test="distinct" >
+      distinct
+    </if>
+    <include refid="Base_Column_List" />
+    from emailselleck.google_record_nodup
+    <if test="whereClause != null" >
+      where ${whereClause}
+    </if>
+    <if test="orderByClause != null" >
+      order by ${orderByClause}
+    </if>
+  </select>
+  
+ <update id="updateArticle" parameterType="map" >
+    update base_fields
+    <set >
+      <if test="record.fieldId != null" >
+        FIELD_ID = #{record.fieldId},
+      </if>
+      <if test="record.field != null" >
+        FIELD = #{record.field},
+      </if>
+      <if test="record.fieldName != null" >
+        FIELD_NAME = #{record.fieldName},
+      </if>
+      <if test="record.valueField != null" >
+        VALUE_FIELD = #{record.valueField},
+      </if>
+      <if test="record.displayField != null" >
+        DISPLAY_FIELD = #{record.displayField},
+      </if>
+      <if test="record.enabled != null" >
+        ENABLED = #{record.enabled},
+      </if>
+      <if test="record.sort != null" >
+        SORT = #{record.sort},
+      </if>
+      <if test="record.needLocale != null" >
+        NEED_LOCALE = #{record.needLocale},
+      </if>
+    </set>
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+  </update>
+  
+  <update id="updateEmailByGoogleSearchEmail" parameterType="selleck.email.pojo.GoogleSearchEmail" >
+   update emailselleck.google_record_nodup gr
+	set gr.email = #{getEmail,jdbcType=VARCHAR} 
+    where gr.title_id = (select gs.title_id from emailselleck.google_search gs where gs.id = #{dataId,jdbcType=INTEGER} )
+     and gr.full_author = #{fullAuthor,jdbcType=VARCHAR} 
+  </update>
+  
+  <insert id="insertGoogleRecord" parameterType="selleck.email.pojo.GoogleRecord" useGeneratedKeys="true" keyProperty="id">
+    insert into emailselleck.google_record (title_id,real_id,html_title,title,keywords,author,full_author,address,addresses,authors,email,pick_date,match_keys,interests,product,small,big,dict_keys,old_keys,sourcees
+      )
+    values (#{titleId,jdbcType=INTEGER}, #{realId,jdbcType=INTEGER},#{htmlTitle,jdbcType=VARCHAR},#{title,jdbcType=VARCHAR}, #{keywords,jdbcType=VARCHAR}, #{shortName,jdbcType=VARCHAR}, #{fullName,jdbcType=VARCHAR}, 
+      #{address,jdbcType=VARCHAR},#{address,jdbcType=VARCHAR},#{fullName,jdbcType=VARCHAR},#{email,jdbcType=VARCHAR},#{pickDate,jdbcType=VARCHAR},#{matchKeys,jdbcType=VARCHAR},#{interests,jdbcType=VARCHAR},
+      #{product,jdbcType=INTEGER},#{small,jdbcType=INTEGER},#{big,jdbcType=INTEGER},#{dictKeys,jdbcType=VARCHAR},#{dictKeys,jdbcType=VARCHAR},#{source,jdbcType=VARCHAR}
+      )
+  </insert>
+  
+  <delete id="deleteByGoogleSearchEmail"  parameterType="selleck.email.pojo.GoogleSearchEmail">
+  	delete from emailselleck.google_record where title_id =  (select gs.title_id from emailselleck.google_search gs where gs.id = #{dataId,jdbcType=INTEGER} )
+  		and full_author = #{fullAuthor,jdbcType=VARCHAR} 
+  </delete>
+  
+</mapper>

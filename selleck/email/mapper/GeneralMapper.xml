@@ -1,0 +1,159 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="selleck.email.dao.GeneralMapper">
+	<resultMap id="emailSuffixMap" type="selleck.email.pojo.AuthorEmailSuffix">
+		<id column="ID" property="id" jdbcType="INTEGER" />
+		<result column="TITLE" property="title" jdbcType="VARCHAR" />
+		<result column="AUTHOR" property="author" jdbcType="VARCHAR" />
+		<result column="ADDRESS" property="address" jdbcType="LONGVARCHAR" />
+		<result column="organ" property="organization" jdbcType="VARCHAR" />
+		<result column="EMAIL_SUFFIX" property="emailSuffix" jdbcType="VARCHAR" />
+	</resultMap>
+	<resultMap id="organizationSuffixMap" type="selleck.email.pojo.OrganizationSuffix">
+		<id column="ID" property="id" jdbcType="INTEGER" />
+		<result column="ADDRESS" property="address" jdbcType="VARCHAR" />
+		<result column="organ" property="organization" jdbcType="VARCHAR" />
+		<result column="EMAIL_SUFFIX" property="emailSuffix" jdbcType="VARCHAR" />
+		<result column="flag" property="flag" jdbcType="TINYINT" />
+		<result column="count" property="count" jdbcType="INTEGER" />
+		<result column="total" property="total" jdbcType="INTEGER" />
+		<result column="move" property="move" jdbcType="TINYINT" />
+	</resultMap>
+    
+    <sql id="Example_Where_Clause" >
+    <trim prefix="where" prefixOverrides="and|or" >
+      <if test="condition.email != null" >
+         and email = #{condition.email}
+      </if>
+      <if test="condition.have_read != null" >
+         and have_read = #{condition.have_read}
+      </if>
+    </trim>
+  </sql>
+  	
+  	<sql id="AuthorEmailNoSuffix_Column_List">
+		ID,TITLE,AUTHOR,ADDRESS,organ,EMAIL_SUFFIX
+  	</sql>
+  	<sql id="OrganizationSuffix_Column_List">
+		ID,ADDRESS,organ,SUFFIX,flag,count,total,move
+  	</sql>
+  	
+  	<select id="selectAuthorEmailNoSuffix" resultMap="emailSuffixMap" parameterType="common.handle.model.Criteria" >
+    select
+    <if test="distinct" >
+      distinct
+    </if>
+    <include refid="AuthorEmailNoSuffix_Column_List" />
+    from emailselleck.author_email_no_suffix
+    <if test="whereClause != null" >
+      where ${whereClause}
+    </if>
+    <if test="orderByClause != null" >
+      order by ${orderByClause}
+    </if>
+  </select>
+  
+  <select id="selectOrganizationSuffix" resultMap="organizationSuffixMap" parameterType="common.handle.model.Criteria" >
+    select
+    <if test="distinct" >
+      distinct
+    </if>
+    <include refid="OrganizationSuffix_Column_List" />
+    from emailselleck.orginazation_suffix
+    <if test="whereClause != null" >
+      where ${whereClause}
+    </if>
+    <if test="orderByClause != null" >
+      order by ${orderByClause}
+    </if>
+  </select>
+  
+ <update id="updateArticle" parameterType="map" >
+    update base_fields
+    <set >
+      <if test="record.fieldId != null" >
+        FIELD_ID = #{record.fieldId},
+      </if>
+      <if test="record.field != null" >
+        FIELD = #{record.field},
+      </if>
+      <if test="record.fieldName != null" >
+        FIELD_NAME = #{record.fieldName},
+      </if>
+      <if test="record.valueField != null" >
+        VALUE_FIELD = #{record.valueField},
+      </if>
+      <if test="record.displayField != null" >
+        DISPLAY_FIELD = #{record.displayField},
+      </if>
+      <if test="record.enabled != null" >
+        ENABLED = #{record.enabled},
+      </if>
+      <if test="record.sort != null" >
+        SORT = #{record.sort},
+      </if>
+      <if test="record.needLocale != null" >
+        NEED_LOCALE = #{record.needLocale},
+      </if>
+    </set>
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+  </update>
+  
+  <update id="updateAuthorEmailNoSuffix" parameterType="selleck.email.pojo.AuthorEmailSuffix" >
+    update emailselleck.author_email_no_suffix
+	set email_suffix = #{emailSuffix,jdbcType=VARCHAR}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  
+  <insert id="insertArticle" parameterType="selleck.email.pojo.Article" useGeneratedKeys="true" keyProperty="id">
+    insert into selleck_edm_article ( title, TITLE_INDEX, ABSTRACT, KEYWORD,KEY_PLUS,email,CORRESPONDINGAUTHOR,CORRESPONDINGADDRESS,SOURCE_PUBLICATION,pDate,type,classification,research,source
+      )
+    values ( #{title,jdbcType=LONGVARCHAR}, #{titleIndex,jdbcType=VARCHAR}, 
+      #{abs,jdbcType=LONGVARCHAR}, #{keyword,jdbcType=VARCHAR},#{keywordPlus,jdbcType=VARCHAR},#{email,jdbcType=VARCHAR},#{correspondingAuthor,jdbcType=VARCHAR},#{correspondingAddress,jdbcType=LONGVARCHAR},
+      #{sourcePublication,jdbcType=VARCHAR}, #{pDate,jdbcType=VARCHAR}, #{type,jdbcType=VARCHAR},#{classification,jdbcType=VARCHAR},
+       #{research,jdbcType=VARCHAR}, #{source,jdbcType=VARCHAR}
+      )
+  </insert>
+  
+  <insert id="insertAuthor" parameterType="selleck.email.pojo.Author" useGeneratedKeys="true" keyProperty="id">
+    insert into selleck_edm_author ( full_name, short_name, address, organization,EMAIL,SOURCE
+      )
+    values (#{fullName,jdbcType=VARCHAR}, #{shortName,jdbcType=VARCHAR}, 
+      #{address,jdbcType=VARCHAR}, #{organization,jdbcType=VARCHAR},#{email,jdbcType=VARCHAR},#{source,jdbcType=VARCHAR}
+      )
+  </insert>
+  
+  <insert id="insertArticleAuthorRel" parameterType="selleck.email.pojo.ArticleAuthorRel">
+    insert into selleck_edm_article_author_rel (author_id, article_id , priority
+      )
+    values (#{authorId,jdbcType=INTEGER}, #{articleId,jdbcType=INTEGER}, #{priority,jdbcType=INTEGER}
+      )
+  </insert>
+  
+  <insert id="insertArticleNotUseDB" parameterType="selleck.email.pojo.Article" useGeneratedKeys="true" keyProperty="id">
+    insert into emailhunter.selleck_edm_article ( title, TITLE_INDEX, ABSTRACT, KEYWORD,KEY_PLUS,email,CORRESPONDINGAUTHOR,CORRESPONDINGADDRESS,SOURCE_PUBLICATION,pDate,type,classification,research,source
+      )
+    values ( #{title,jdbcType=LONGVARCHAR}, #{titleIndex,jdbcType=VARCHAR}, 
+      #{abs,jdbcType=LONGVARCHAR}, #{keyword,jdbcType=VARCHAR},#{keywordPlus,jdbcType=VARCHAR},#{email,jdbcType=VARCHAR},#{correspondingAuthor,jdbcType=VARCHAR},#{correspondingAddress,jdbcType=LONGVARCHAR},
+      #{sourcePublication,jdbcType=VARCHAR}, #{pDate,jdbcType=VARCHAR}, #{type,jdbcType=VARCHAR},#{classification,jdbcType=VARCHAR},
+       #{research,jdbcType=VARCHAR}, #{source,jdbcType=VARCHAR}
+      )
+  </insert>
+  
+  <insert id="insertAuthorNotUseDB" parameterType="selleck.email.pojo.Author" useGeneratedKeys="true" keyProperty="id">
+    insert into emailhunter.selleck_edm_author ( full_name, short_name, address, organization,EMAIL,SOURCE
+      )
+    values (#{fullName,jdbcType=VARCHAR}, #{shortName,jdbcType=VARCHAR}, 
+      #{address,jdbcType=VARCHAR}, #{organization,jdbcType=VARCHAR},#{email,jdbcType=VARCHAR},#{source,jdbcType=VARCHAR}
+      )
+  </insert>
+  
+  <insert id="insertArticleAuthorRelNotUseDB" parameterType="selleck.email.pojo.ArticleAuthorRel">
+    insert into emailhunter.selleck_edm_article_author_rel (author_id, article_id , priority
+      )
+    values (#{authorId,jdbcType=INTEGER}, #{articleId,jdbcType=INTEGER}, #{priority,jdbcType=INTEGER}
+      )
+  </insert>
+</mapper>

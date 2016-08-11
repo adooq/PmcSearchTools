@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="selleck.email.dao.DXYMapper">
+	<resultMap id="topicMap" type="selleck.email.pojo.DXY_Topic">
+		<id column="ID" property="id" jdbcType="INTEGER" />
+		<result column="title" property="title" jdbcType="VARCHAR" />
+		<result column="url" property="url" jdbcType="VARCHAR" />
+		<result column="openDate" property="openDate" jdbcType="DATE" />
+	</resultMap>
+	
+	<resultMap id="replyMap" type="selleck.email.pojo.DXY_Reply">
+		<id column="ID" property="id" jdbcType="INTEGER" />
+		<result column="cotent" property="cotent" jdbcType="VARCHAR" />
+		<result column="topicId" property="topicId" jdbcType="INTEGER" />
+	</resultMap>
+   
+  	
+  	<sql id="topic_Column_List">
+		ID,title,url,openDate
+  	</sql>
+  	
+  	<sql id="reply_Column_List">
+		ID,content,topicId
+  	</sql>
+  	
+  	<select id="selectTopic" resultMap="topicMap" parameterType="common.handle.model.Criteria" >
+    select
+    <if test="distinct" >
+      distinct
+    </if>
+    <include refid="topic_Column_List" />
+    from t_dxy_topic
+    <if test="whereClause != null" >
+      where ${whereClause}
+    </if>
+    <if test="orderByClause != null" >
+      order by ${orderByClause}
+    </if>
+  </select>
+  
+  	<select id="selectReply" resultMap="replyMap" parameterType="common.handle.model.Criteria" >
+    select
+    <if test="distinct" >
+      distinct
+    </if>
+    <include refid="reply_Column_List" />
+    from t_dxy_reply
+    <if test="whereClause != null" >
+      where ${whereClause}
+    </if>
+    <if test="orderByClause != null" >
+      order by ${orderByClause}
+    </if>
+  </select>
+  
+  <update id="updateTopic" parameterType="selleck.email.pojo.DXY_Topic" >
+    update t_dxy_topic
+	set 
+	title = #{title,jdbcType=VARCHAR} , url = #{url,jdbcType=VARCHAR} , openDate = #{openDate,jdbcType=DATE} , forumId = #{forumId,jdbcType=INTEGER}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  
+  <insert id="saveTopic" parameterType="selleck.email.pojo.DXY_Topic" useGeneratedKeys="true" keyProperty="id">
+  	  insert ignore into t_dxy_topic ( title, url, openDate , forumId
+      )
+    	values (#{title,jdbcType=VARCHAR} , #{url,jdbcType=VARCHAR}, #{openDate,jdbcType=DATE} ,#{forumId,jdbcType=INTEGER}
+      )
+  </insert>
+  
+  <update id="updateReply" parameterType="selleck.email.pojo.DXY_Reply" >
+    update t_dxy_reply
+	set 
+	title = #{title,jdbcType=VARCHAR} , url = #{url,jdbcType=VARCHAR} , openDate = #{openDate,jdbcType=DATE} 
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  
+  <insert id="saveReply" parameterType="selleck.email.pojo.DXY_Reply" useGeneratedKeys="true" keyProperty="id">
+  	  insert ignore into t_dxy_reply ( content, topicId
+      )
+    	values (#{content,jdbcType=LONGVARCHAR} , #{topicId,jdbcType=INTEGER}
+      )
+  </insert>
+
+</mapper>

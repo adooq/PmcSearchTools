@@ -1,0 +1,263 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="selleck.email.dao.AuthorMapper">
+	<resultMap id="BaseResultMap" type="selleck.email.pojo.Author">
+		<id column="ID" property="id" jdbcType="INTEGER" />
+		<result column="full_name" property="fullName" jdbcType="VARCHAR" />
+		<result column="short_name" property="shortName" jdbcType="VARCHAR" />
+		<result column="address" property="address" jdbcType="LONGVARCHAR" />
+		<result column="organization" property="organization" jdbcType="VARCHAR" />
+		<result column="EMAIL" property="email" jdbcType="VARCHAR" />
+		<result column="SOURCE" property="source" jdbcType="VARCHAR" />
+		<result column="country" property="country" jdbcType="VARCHAR" />
+		<result column="organ" property="organ" jdbcType="INTEGER" />
+	</resultMap>
+
+	<sql id="Example_Where_Clause">
+		<trim prefix="where" prefixOverrides="and|or">
+			<if test="condition.email != null">
+				and email = #{condition.email}
+			</if>
+		</trim>
+	</sql>
+
+	<sql id="Base_Column_List">
+		ID,full_name,short_name,address,organization,EMAIL,SOURCE,country,organ
+	</sql>
+
+	<sql id="table_name"> emailhunter.selleck_edm_author</sql>
+
+	<select id="selectByExample" resultMap="BaseResultMap"
+		parameterType="common.handle.model.Criteria">
+		<include refid="common.MySql_Pagination_Head" />
+		select
+		<if test="distinct">
+			distinct
+		</if>
+		<include refid="Base_Column_List" />
+		from emailhunter.selleck_edm_author
+		<if test="whereClause != null">
+			where ${whereClause}
+		</if>
+		<if test="orderByClause != null">
+			order by ${orderByClause}
+		</if>
+		<include refid="common.MySql_Pagination_Tail" />
+	</select>
+
+	<select id="selectNoDup" resultMap="BaseResultMap"
+		parameterType="common.handle.model.Criteria">
+		<include refid="common.MySql_Pagination_Head" />
+		select
+		<if test="distinct">
+			distinct
+		</if>
+		<include refid="Base_Column_List" />
+		from emailhunter.selleck_edm_author_nodup
+		<if test="whereClause != null">
+			where ${whereClause}
+		</if>
+		<if test="orderByClause != null">
+			order by ${orderByClause}
+		</if>
+		<include refid="common.MySql_Pagination_Tail" />
+	</select>
+
+	<update id="updateAuthor" parameterType="selleck.email.pojo.Author">
+		update
+		emailhunter.selleck_edm_author
+		set
+		full_name = #{fullName,jdbcType=VARCHAR},
+		short_name = #{shortName,jdbcType=VARCHAR},
+		address = #{address,jdbcType=VARCHAR},
+		organization = #{organization,jdbcType=VARCHAR},
+		EMAIL = #{email,jdbcType=VARCHAR},
+		SOURCE = #{source,jdbcType=VARCHAR},
+		country = #{country,jdbcType=VARCHAR},
+		organ = #{organ,jdbcType=INTEGER}
+		where id = #{id,jdbcType=INTEGER}
+	</update>
+
+	<delete id="deleteAuthor" parameterType="selleck.email.pojo.Author">
+		delete from emailhunter.selleck_edm_author 
+		where id = #{id,jdbcType=INTEGER}
+	</delete>
+
+	<insert id="insertAuthor" parameterType="selleck.email.pojo.Author"
+		useGeneratedKeys="true" keyProperty="id">
+		insert into
+		emailhunter.selleck_edm_author ( full_name, short_name, address,
+		organization,EMAIL,SOURCE )
+		values (
+		#{fullName,jdbcType=VARCHAR},
+		#{shortName,jdbcType=VARCHAR},
+		#{address,jdbcType=VARCHAR},
+		#{organization,jdbcType=VARCHAR},
+		#{email,jdbcType=VARCHAR},
+		#{source,jdbcType=VARCHAR},
+		#{organ,jdbcType=INTEGER}
+		)
+	</insert>
+	
+	<insert id="saveAuthor" parameterType="selleck.email.pojo.Author">
+		insert into
+		emailhunter.selleck_edm_author ( id, full_name, short_name, address,
+		organization,EMAIL,SOURCE,country )
+		values (
+			#{id,jdbcType=INTEGER},
+			#{fullName,jdbcType=VARCHAR},
+			#{shortName,jdbcType=VARCHAR},
+			#{address,jdbcType=VARCHAR},
+			#{organization,jdbcType=VARCHAR},
+			#{email,jdbcType=VARCHAR},
+			#{source,jdbcType=VARCHAR},
+			#{country,jdbcType=VARCHAR},
+			#{organ,jdbcType=INTEGER}
+		)
+		<if test=" email != null ">
+			on duplicate key update email = #{email,jdbcType=VARCHAR}
+		</if>
+	</insert>
+	
+
+	<insert id="insertArticleAuthorRel" parameterType="selleck.email.pojo.ArticleAuthorRel">
+		insert into
+		emailhunter.selleck_edm_article_author_rel (author_id,
+		article_id ,
+		priority
+		)
+		values (#{authorId,jdbcType=INTEGER},
+		#{articleId,jdbcType=INTEGER},
+		#{priority,jdbcType=INTEGER}
+		)
+	</insert>
+
+	<update id="changeEmails" parameterType="java.lang.Integer">
+		update
+		selleck_edm_author
+		set email = REPLACE(email, '@zitha.lu',
+		'@hopitauxschuman.lu') WHERE
+		INSTR(email, '@zitha.lu') > 0
+		and id >
+		#{authorId};
+
+		update selleck_edm_author
+		set email = REPLACE(email,
+		'@merl-ltd.co.uk', '@element.com') WHERE
+		INSTR(email,
+		'@merl-ltd.co.uk') > 0
+		and id > #{authorId};
+
+		update selleck_edm_author
+		set email = REPLACE(email, '@kikom.unibe.ch', '@ikom.unibe.ch') WHERE
+		INSTR(email, '@kikom.unibe.ch') > 0
+		and id > #{authorId};
+
+		update
+		selleck_edm_author
+		set email = REPLACE(email,
+		'@rockvax.rockefeller.edu',
+		'@rockefeller.edu') WHERE INSTR(email,
+		'@rockvax.rockefeller.edu ') >
+		0
+		and id > #{authorId};
+
+		update
+		selleck_edm_author
+		set email = REPLACE(email,
+		'@rocky2.rockefeller.edu', '@rockefeller.edu')
+		WHERE INSTR(email,
+		'@rocky2.rockefeller.edu') > 0
+		and id > #{authorId};
+
+		update
+		selleck_edm_author
+		set email = REPLACE(email, '@baisha.com',
+		'@hngytobacco.com') WHERE
+		INSTR(email, '@baisha.com') > 0
+		and id >
+		#{authorId};
+
+		update selleck_edm_author
+		set email = REPLACE(email,
+		'@stork.com', '@element.com') WHERE
+		INSTR(email, '@stork.com') > 0
+		and
+		id > #{authorId};
+
+		update selleck_edm_author
+		set email = REPLACE(email,
+		'@groept.be', '@kuleuven.be') WHERE
+		INSTR(email, '@groept.be') > 0
+		and
+		id > #{authorId};
+
+		update selleck_edm_author
+		set email = REPLACE(email,
+		'@mail.rockefeller.edu', '@rockefeller.edu')
+		WHERE INSTR(email,
+		'@mail.rockefeller.edu') > 0
+		and id > #{authorId};
+
+		update
+		selleck_edm_author
+		set email = REPLACE(email, '@fgi.fi', '@nls.fi')
+		WHERE INSTR(email,
+		'@fgi.fi') > 0
+		and id > #{authorId};
+
+		update
+		selleck_edm_author
+		set email = REPLACE(email, '@adm.njit.edu',
+		'@njit.edu') WHERE
+		INSTR(email, '@adm.njit.edu') > 0
+		and id >
+		#{authorId};
+
+		update selleck_edm_author
+		set email = REPLACE(email,
+		'@lu.unisi.ch', '@usi.ch') WHERE INSTR(email,
+		'@lu.unisi.ch') > 0
+		and id
+		> #{authorId};
+
+		update selleck_edm_author
+		set email = REPLACE(email,
+		'@unisi.ch', '@usi.ch') WHERE INSTR(email,
+		'@unisi.ch') > 0
+		and id >
+		#{authorId};
+
+		update selleck_edm_author
+		set email = REPLACE(email,
+		'@tilak.at', '@tirol-kliniken.at') WHERE
+		INSTR(email, '@tilak.at') > 0
+		and id > #{authorId};
+
+		update selleck_edm_author
+		set email =
+		REPLACE(email, '@uki.at', '@tirol-kliniken.at') WHERE
+		INSTR(email,
+		'@uki.at') > 0
+		and id > #{authorId};
+
+		update selleck_edm_author
+		set email
+		= REPLACE(email, '@vitroweb.com', '@vitro.bio') WHERE
+		INSTR(email,
+		'@vitroweb.com') > 0
+		and id > #{authorId};
+
+		update selleck_edm_author
+		set
+		email = REPLACE(email, '@adm.njit.edu', '@njit.edu') WHERE
+		INSTR(email, '@adm.njit.edu') > 0
+		and id > #{authorId};
+	</update>
+
+	<select id="selectMaxId" resultType="java.lang.Integer">
+		select IFNULL(max(id),0)
+		from selleck_edm_author
+	</select>
+
+</mapper>

@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="selleck.email.dao.EdmEmailGeneralMapper">
+	<resultMap id="BaseResultMap" type="selleck.email.pojo.EdmEmailGeneral">
+		<id column="ID" property="id" jdbcType="INTEGER" />
+		<result column="data_id" property="dataId" jdbcType="INTEGER" />
+		<result column="address" property="address" jdbcType="VARCHAR" />
+		<result column="URL" property="url" jdbcType="VARCHAR" />
+		<result column="name" property="name" jdbcType="VARCHAR" />
+		<result column="email" property="email" jdbcType="VARCHAR" />
+		<result column="university" property="university" jdbcType="VARCHAR" />
+		<result column="country" property="country" jdbcType="VARCHAR" />
+		<result column="research_filed" property="researchFiled" jdbcType="VARCHAR" />
+		<result column="interest" property="interest" jdbcType="VARCHAR" />
+		<result column="detail" property="detail" jdbcType="VARCHAR" />
+		<result column="note" property="note" jdbcType="VARCHAR" />
+		<result column="city" property="city" jdbcType="VARCHAR" />
+		<result column="phone" property="phone" jdbcType="VARCHAR" />
+		<result column="zip_code" property="zipCode" jdbcType="VARCHAR" />
+		<result column="finder" property="finder" jdbcType="VARCHAR" />
+		<result column="checker" property="checker" jdbcType="VARCHAR" />
+		<result column="pick_date" property="pickDate" jdbcType="VARCHAR" />
+		<result column="read_flag" property="readFlag" jdbcType="INTEGER" />
+		<result column="create_date" property="createDate" jdbcType="VARCHAR" />
+		<result column="update_date" property="updateDate" jdbcType="VARCHAR" />
+		<result column="update_flag" property="updateFlag" jdbcType="INTEGER" />		
+	</resultMap>
+    
+	<sql id="Base_Column_List">
+		ID,data_id,address,URL,name,email,university,country,research_filed,interest,detail,note,
+		city,phone,zip_code,finder,checker,pick_date,read_flag,create_date,update_date,update_flag
+  	</sql>	
+	<insert id="insert" parameterType="selleck.email.pojo.EdmEmailGeneral">
+		insert into t_edm_email_general (ID,data_id,address,URL,name,email,university,country,
+		research_filed,interest,detail,note,city,phone,zip_code,finder,checker,pick_date,
+		read_flag,create_date,update_date,update_flag,real_url)
+		values (#{id,jdbcType=INTEGER}, #{dataId,jdbcType=INTEGER}, #{address,jdbcType=VARCHAR}, 
+	      #{url,jdbcType=VARCHAR}, #{name,jdbcType=VARCHAR},#{email,jdbcType=VARCHAR},
+	      #{university,jdbcType=VARCHAR},#{country,jdbcType=VARCHAR}, #{researchFiled,jdbcType=VARCHAR},
+	      #{interest,jdbcType=VARCHAR},#{detail,jdbcType=VARCHAR}, #{note,jdbcType=VARCHAR},
+	      #{city,jdbcType=VARCHAR},#{phone,jdbcType=VARCHAR}, #{zipCode,jdbcType=VARCHAR},
+	      #{finder,jdbcType=VARCHAR},#{checker,jdbcType=VARCHAR}, #{pickDate,jdbcType=VARCHAR},
+	      #{readFlag,jdbcType=INTEGER},#{createDate,jdbcType=VARCHAR},#{updateDate,jdbcType=VARCHAR},
+	      #{updateFlag,jdbcType=INTEGER},#{realURL,jdbcType=VARCHAR})
+	</insert>
+	
+	<select id="selectByExample" resultMap="BaseResultMap"
+		parameterType="common.handle.model.Criteria">
+			select
+		<if test="distinct">
+			distinct
+    	</if>
+		<include refid="Base_Column_List" />
+		from t_edm_email_general where URL = #{condition.url}
+	</select>
+	
+	<update id="updateByPrimaryKey" parameterType="selleck.email.pojo.EdmEmailGeneral">
+		update t_edm_email_general
+		set update_flag = #{updateFlag,jdbcType=INTEGER}
+		where ID = #{id,jdbcType=INTEGER}
+  </update>
+</mapper>

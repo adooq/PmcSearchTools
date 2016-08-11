@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="selleck.email.dao.ProductMapper">
+	<resultMap id="productResult" type="selleck.email.interest.beans.ProductClass">
+		<id column="ID" property="id" jdbcType="INTEGER" />
+		<result column="name" property="name" jdbcType="VARCHAR" />
+		<result column="cat" property="cat" jdbcType="VARCHAR" />
+		<result column="smallCategoryId" property="smallCategoryId" jdbcType="INTEGER" />
+		<result column="bigCategoryId" property="bigCategoryId" jdbcType="INTEGER" />
+		<result column="sql_name" property="sql_name" jdbcType="VARCHAR" />
+	</resultMap>
+	<resultMap id="categoryResult" type="selleck.email.interest.beans.ProductClass">
+		<id column="ID" property="id" jdbcType="INTEGER" />
+		<result column="name" property="name" jdbcType="VARCHAR" />
+		<result column="smallCategoryId" property="smallCategoryId" jdbcType="INTEGER" />
+		<result column="bigCategoryId" property="bigCategoryId" jdbcType="INTEGER" />
+	</resultMap>
+	<resultMap id="productSmallRel" type="selleck.email.interest.beans.RelClass">
+		<result column="product_id" property="childId" jdbcType="INTEGER" />
+		<result column="category_id" property="parentId" jdbcType="INTEGER" />
+		<result column="score" property="score" jdbcType="INTEGER" />
+	</resultMap>
+	<resultMap id="smallBigRel" type="selleck.email.interest.beans.RelClass">
+		<result column="childId" property="childId" jdbcType="INTEGER" />
+		<result column="parentId" property="parentId" jdbcType="INTEGER" />
+		<result column="score" property="score" jdbcType="INTEGER" />
+	</resultMap>
+	
+    
+    <sql id="Example_Where_Clause" >
+    <trim prefix="where" prefixOverrides="and|or" >
+      <if test="condition.field != null" >
+         and FIELD = #{condition.field}
+      </if>
+    </trim>
+  </sql>
+  
+	<sql id="Base_Column_List">
+		ID,KEYWORD,INTEREST,CATEGORYID,add_date,flag
+  	</sql>
+  	
+  <select id="getSmallBigRel" resultMap="smallBigRel">
+   		select parentId , childId , score from selleck_productcategory_rel_new 
+  </select>
+  
+  <select id="getProductCategoryRel" resultMap="productSmallRel">
+   		select product_id , category_id , score from selleck_producttocategory_new 
+  </select>
+  
+  <select id="getProducts" resultMap="productResult">
+   		select id,cat,name,smallCategoryId, bigCategoryId, sql_name from selleck_product
+  </select>
+  
+  <select id="getProductsByCriteria" resultMap="productResult" parameterType="common.handle.model.Criteria">
+   		select id,cat,name,smallCategoryId, bigCategoryId, sql_name from selleck_product
+   		<if test="whereClause != null" >
+			where ${whereClause}
+		</if>
+  </select>
+  
+  <select id="getCategory" resultMap="categoryResult"  parameterType="common.handle.model.Criteria">
+   	select id,name, bigCategoryId  from selleck_productcategory
+   	<if test="whereClause != null" >
+      where ${whereClause}
+    </if>
+  </select>
+</mapper>

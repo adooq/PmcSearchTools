@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="selleck.email.dao.LabmemReferenceMapper">
+	<resultMap id="BaseResultMap" type="selleck.email.pojo.LabmemReference">
+		<id column="ID" property="id" jdbcType="INTEGER" />
+		<result column="data_id" property="dataId" jdbcType="INTEGER" />
+		<result column="address" property="address" jdbcType="VARCHAR" />
+		<result column="organit_URL" property="organitURL" jdbcType="VARCHAR" />
+		<result column="organit_name" property="organitName" jdbcType="VARCHAR" />
+		<result column="university" property="university" jdbcType="VARCHAR" />
+		<result column="country" property="country" jdbcType="VARCHAR" />
+		<result column="boss_name" property="bossName" jdbcType="VARCHAR" />
+		<result column="boss_URL" property="bossURL" jdbcType="VARCHAR" />
+		<result column="boss_email" property="bossEmail" jdbcType="VARCHAR" />
+		<result column="lab_URL" property="labURL" jdbcType="VARCHAR" />
+		<result column="faculty_URL" property="facultyURL" jdbcType="VARCHAR" />
+		<result column="research_filed" property="researchFiled" jdbcType="VARCHAR" />
+		<result column="interest" property="interest" jdbcType="VARCHAR" />
+		<result column="detail" property="detail" jdbcType="VARCHAR" />
+		<result column="note" property="note" jdbcType="VARCHAR" />
+		<result column="city" property="city" jdbcType="VARCHAR" />
+		<result column="phone" property="phone" jdbcType="VARCHAR" />
+		<result column="zip_code" property="zipCode" jdbcType="VARCHAR" />
+		<result column="finder" property="finder" jdbcType="VARCHAR" />
+		<result column="checker" property="checker" jdbcType="VARCHAR" />
+		<result column="pick_date" property="pickDate" jdbcType="VARCHAR" />
+		<result column="read_flag" property="readFlag" jdbcType="INTEGER" />	
+	</resultMap>
+    
+    <sql id="Example_Where_Clause" >
+    <trim prefix="where" prefixOverrides="and|or" >
+      <if test="condition.field != null" >
+         and FIELD = #{condition.field}
+      </if>
+    </trim>
+  </sql>
+  
+	<sql id="Base_Column_List">
+		ID,data_id,address,organit_URL,organit_name,university,country,boss_name,
+		boss_URL,boss_email,lab_URL,faculty_URL,research_filed,interest,detail,
+		note,city,phone,zip_code,finder,checker,pick_date,read_flag
+  	</sql>
+  	
+	<select id="selectByExample" resultMap="BaseResultMap" parameterType="common.handle.model.Criteria">
+			select
+		<if test="distinct">
+			distinct
+    	</if>
+		<include refid="Base_Column_List" />
+		from labmem_reference
+		<if test="_parameter != null" >
+			<include refid="Example_Where_Clause" />
+		</if>
+	</select>
+	
+	<select id="selectLabUrlNotNull" resultMap="BaseResultMap" parameterType="common.handle.model.Criteria">
+			select
+		<if test="distinct">
+			distinct
+    	</if>
+		<include refid="Base_Column_List" />
+		from labmem_reference where lab_url is not null and lab_url != ''
+	</select>
+</mapper>

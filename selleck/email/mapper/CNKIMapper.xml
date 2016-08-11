@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="selleck.email.dao.CNKIMapper">
+	<resultMap id="BaseResultMap" type="selleck.email.pojo.CNKI">
+		<id column="ID" property="id" jdbcType="INTEGER" />
+		<result column="title" property="title" jdbcType="VARCHAR" />
+		<result column="abstract" property="abs" jdbcType="LONGVARCHAR" />
+		<result column="AUTHOR_EN" property="authors_en" jdbcType="VARCHAR" />
+		<result column="AUTHOR_CN" property="authors_cn" jdbcType="VARCHAR" />
+		<result column="keyword" property="keyword" jdbcType="VARCHAR" />
+		<result column="organization" property="organization" jdbcType="VARCHAR" />
+		<result column="foundation" property="foundation" jdbcType="VARCHAR" />
+		<result column="email" property="email" jdbcType="VARCHAR" />
+		<result column="publication" property="publication" jdbcType="VARCHAR" />
+		<result column="pdf_url" property="pdf_url" jdbcType="VARCHAR" />
+	</resultMap>
+    
+    <sql id="Example_Where_Clause" >
+    <trim prefix="where" prefixOverrides="and|or" >
+      <if test="condition.publication != null" >
+         and publication = #{condition.publication}
+      </if>
+      <if test="condition.readFlag != null" >
+         and read_flag = #{condition.readFlag}
+      </if>
+    </trim>
+  </sql>
+  
+	<sql id="Base_Column_List">
+		id,title,abstract,author_cn,author_en,foundation,organization,keyword,email,publication,pdf_url
+  	</sql>
+  	
+  	<select id="selectByExample" resultMap="BaseResultMap" parameterType="common.handle.model.Criteria" >
+    <include refid="common.MySql_Pagination_Head" />
+    select
+    <if test="distinct" >
+      distinct
+    </if>
+    <include refid="Base_Column_List" />
+    from search_cnki_by_publication
+    <if test="whereClause != null" >
+      where ${whereClause}
+    </if>
+    <if test="orderByClause != null" >
+      order by ${orderByClause}
+    </if>
+    <include refid="common.MySql_Pagination_Tail" />
+  </select>
+  
+  <select id="selectForWangguo" resultMap="BaseResultMap" parameterType="common.handle.model.Criteria" >
+    <include refid="common.MySql_Pagination_Head" />
+    select
+    <if test="distinct" >
+      distinct
+    </if>
+    <include refid="Base_Column_List" />
+    from search_cnki_by_publication_for_wangguo
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+    <if test="orderByClause != null" >
+      order by ${orderByClause}
+    </if>
+    <include refid="common.MySql_Pagination_Tail" />
+  </select>
+  
+  <update id="updateEmailAndEnAbs" parameterType="selleck.email.pojo.CNKI" >
+    update search_cnki_by_publication
+	set email = #{email,jdbcType=VARCHAR} , abstract_en = #{abs_en,jdbcType=LONGVARCHAR},
+	read_flag = #{readFlag,jdbcType=VARCHAR} 
+	where ID = #{id,jdbcType=INTEGER}
+	</update>
+</mapper>

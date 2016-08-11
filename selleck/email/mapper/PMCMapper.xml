@@ -1,0 +1,160 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="selleck.email.dao.PMCMapper">
+	<resultMap id="BaseResultMap" type="selleck.email.pojo.PMC">
+		<id column="ID" property="id" jdbcType="INTEGER" />
+		<result column="title" property="title" jdbcType="VARCHAR" />
+		<result column="abstract" property="abs" jdbcType="LONGVARCHAR" />
+		<result column="keyword" property="keyword" jdbcType="VARCHAR" />
+		<result column="CORRESPONDINGAUTHOR" property="correspondingAuthor" jdbcType="VARCHAR" />
+		<result column="FULLCORRESPONDINGAUTHOR" property="fullCorrespondingAuthor" jdbcType="VARCHAR" />
+		<result column="CORRESPONDINGADDRESS" property="correspondingAddress" jdbcType="LONGVARCHAR" />
+		<result column="AUTHORS" property="authors" jdbcType="LONGVARCHAR" />
+		<result column="ADDRESSES" property="addresses" jdbcType="LONGVARCHAR" />
+		<result column="email" property="email" jdbcType="VARCHAR" />
+		<result column="SOURCE_PUBLICATION" property="sourcePublication" jdbcType="VARCHAR" />
+		<result column="PDATE" property="pDate" jdbcType="VARCHAR" />
+		<result column="referrence" property="referrence" jdbcType="LONGVARCHAR" />
+		<result column="full_text" property="fullText" jdbcType="LONGVARCHAR" />
+		<result column="CORRESPONDING_INFO" property="correspondingInfo" jdbcType="LONGVARCHAR" />
+		<result column="url" property="url" jdbcType="VARCHAR" />
+		<result column="have_read" property="haveRead" jdbcType="TINYINT" />
+	</resultMap>
+	
+	<resultMap id="searchRecordPMC" type="selleck.email.pojo.PMC">
+		<id column="ID" property="id" jdbcType="INTEGER" />
+		<result column="title" property="title" jdbcType="VARCHAR" />
+		<result column="abstract" property="abs" jdbcType="LONGVARCHAR" />
+		<result column="KEYWORDS" property="keyword" jdbcType="VARCHAR" />
+		<result column="CORRESPONDINGAUTHOR" property="correspondingAuthor" jdbcType="LONGVARCHAR" />
+		<result column="CORRESPONDINGADDRESS" property="correspondingAddress" jdbcType="LONGVARCHAR" />
+		<result column="AUTHORS" property="authors" jdbcType="LONGVARCHAR" />
+		<result column="ADDRESSES" property="addresses" jdbcType="LONGVARCHAR" />
+		<result column="email" property="email" jdbcType="VARCHAR" />
+		<result column="JOURNAL" property="sourcePublication" jdbcType="VARCHAR" />
+		<result column="PUBLICTIME" property="pDate" jdbcType="VARCHAR" />
+		<result column="parsed" property="haveRead" jdbcType="TINYINT" />
+	</resultMap>
+    
+    <sql id="Example_Where_Clause" >
+    <trim prefix="where" prefixOverrides="and|or" >
+      <if test="condition.email != null" >
+         and email = #{condition.email}
+      </if>
+      <if test="condition.have_read != null" >
+         and have_read = #{condition.have_read}
+      </if>
+    </trim>
+  </sql>
+  	
+  	<sql id="Base_Column_List">
+		ID,title,abstract,keyword,CORRESPONDINGAUTHOR,CORRESPONDINGADDRESS,AUTHORS,ADDRESSES,
+		email,SOURCE_PUBLICATION,PDATE,referrence,full_text,CORRESPONDING_INFO,have_read,url
+  	</sql>
+  	
+  	<sql id="SearchRecord_Column_List">
+		ID,title,abstract,KEYWORDS,CORRESPONDINGAUTHOR,CORRESPONDINGADDRESS,AUTHORS,ADDRESSES,
+		email,JOURNAL,PUBLICTIME,parsed,ResearchAreas,ScienceCategories,DocumentType
+  	</sql>
+  	
+  	<select id="selectBySearchPublication" resultMap="BaseResultMap" parameterType="common.handle.model.Criteria" >
+    select
+    <if test="distinct" >
+      distinct
+    </if>
+    <include refid="Base_Column_List" />
+    from search_pmc_by_publication
+    <if test="whereClause != null" >
+      where ${whereClause}
+    </if>
+    <if test="orderByClause != null" >
+      order by ${orderByClause}
+    </if>
+  </select>
+  
+  <select id="selectBySearchRecord" resultMap="searchRecordPMC" parameterType="common.handle.model.Criteria" >
+    select
+    <if test="distinct" >
+      distinct
+    </if>
+    <include refid="SearchRecord_Column_List" />
+    from search_record
+    <if test="whereClause != null" >
+      where ${whereClause}
+    </if>
+    <if test="orderByClause != null" >
+      order by ${orderByClause}
+    </if>
+  </select>
+
+  <update id="setRead" parameterType="selleck.email.pojo.PMC" >
+    update search_pmc_by_publication
+	set have_read = 1
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  
+  <update id="setSearchRecordRead" parameterType="selleck.email.pojo.PMC" >
+    update search_record
+	set parsed = 1
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  
+  <update id="updatePMC" parameterType="selleck.email.pojo.PMC" >
+    update search_pmc_by_publication
+	set 
+	TITLE = #{title,jdbcType=VARCHAR} , ABSTRACT = #{abs,jdbcType=LONGVARCHAR} , KEYWORD = #{keyword,jdbcType=VARCHAR} , CORRESPONDINGAUTHOR = #{correspondingAuthor,jdbcType=LONGVARCHAR},
+	AUTHORS = #{authors,jdbcType=LONGVARCHAR}, ADDRESSES = #{addresses,jdbcType=LONGVARCHAR} , EMAIL = #{email,jdbcType=VARCHAR} , SOURCE_PUBLICATION = #{sourcePublication,jdbcType=VARCHAR},
+	PDATE = #{pDate,jdbcType=VARCHAR} , referrence = #{referrence,jdbcType=LONGVARCHAR} , full_text = #{fullText,jdbcType=LONGVARCHAR} , CORRESPONDING_INFO = #{correspondingInfo,jdbcType=LONGVARCHAR},
+	url = #{url,jdbcType=VARCHAR} , CORRESPONDINGADDRESS = #{correspondingAddress,jdbcType=LONGVARCHAR}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  
+  <insert id="savePMC" parameterType="selleck.email.pojo.PMC" useGeneratedKeys="true" keyProperty="id">
+    insert ignore into search_pmc_by_publication ( TITLE, ABSTRACT, KEYWORD, CORRESPONDINGAUTHOR,CORRESPONDINGADDRESS,AUTHORS,ADDRESSES,
+    	EMAIL,SOURCE_PUBLICATION,PDATE,referrence,full_text,CORRESPONDING_INFO,url
+      )
+    values (#{title,jdbcType=VARCHAR}, #{abs,jdbcType=LONGVARCHAR}, #{keyword,jdbcType=VARCHAR}, #{correspondingAuthor,jdbcType=LONGVARCHAR}, #{correspondingAddress,jdbcType=LONGVARCHAR}, 
+      #{authors,jdbcType=LONGVARCHAR}, #{addresses,jdbcType=LONGVARCHAR},#{email,jdbcType=VARCHAR},#{sourcePublication,jdbcType=VARCHAR},
+      #{pDate,jdbcType=VARCHAR},#{referrence,jdbcType=LONGVARCHAR},#{fullText,jdbcType=LONGVARCHAR},#{correspondingInfo,jdbcType=LONGVARCHAR},
+      #{url,jdbcType=VARCHAR}
+      )
+  </insert>
+  <insert id="savePMCByKeyword" parameterType="selleck.email.pojo.PMC" useGeneratedKeys="true" keyProperty="id">
+    insert ignore into search_pmc_by_keyword ( TITLE, ABSTRACT, KEYWORD, CORRESPONDINGAUTHOR,CORRESPONDINGADDRESS,AUTHORS,ADDRESSES,
+    	EMAIL,SOURCE_PUBLICATION,PDATE,referrence,full_text,CORRESPONDING_INFO,url,searchKeyword
+      )
+    values (#{title,jdbcType=VARCHAR}, #{abs,jdbcType=LONGVARCHAR}, #{keyword,jdbcType=VARCHAR}, #{correspondingAuthor,jdbcType=LONGVARCHAR}, #{correspondingAddress,jdbcType=LONGVARCHAR}, 
+      #{authors,jdbcType=LONGVARCHAR}, #{addresses,jdbcType=LONGVARCHAR},#{email,jdbcType=VARCHAR},#{sourcePublication,jdbcType=VARCHAR},
+      #{pDate,jdbcType=VARCHAR},#{referrence,jdbcType=LONGVARCHAR},#{fullText,jdbcType=LONGVARCHAR},#{correspondingInfo,jdbcType=LONGVARCHAR},
+      #{url,jdbcType=VARCHAR},#{searchKeyword,jdbcType=VARCHAR}
+      )
+  </insert>
+  
+  <insert id="insertArticle" parameterType="selleck.email.pojo.Article" useGeneratedKeys="true" keyProperty="id">
+    insert into selleck_edm_article ( title, TITLE_INDEX, ABSTRACT, KEYWORD,KEY_PLUS,email,CORRESPONDINGAUTHOR,CORRESPONDINGADDRESS,SOURCE_PUBLICATION,pDate,type,classification,research,source,
+    	referrence,full_text,CORRESPONDING_INFO,FULLCORRESPONDINGAUTHOR
+      )
+    values ( #{title,jdbcType=LONGVARCHAR}, #{titleIndex,jdbcType=VARCHAR}, 
+      #{abs,jdbcType=LONGVARCHAR}, #{keyword,jdbcType=VARCHAR},#{keywordPlus,jdbcType=VARCHAR},#{email,jdbcType=VARCHAR},#{correspondingAuthor,jdbcType=VARCHAR},#{correspondingAddress,jdbcType=LONGVARCHAR},
+      #{sourcePublication,jdbcType=VARCHAR}, #{pDate,jdbcType=VARCHAR}, #{type,jdbcType=VARCHAR},#{classification,jdbcType=VARCHAR},
+       #{research,jdbcType=VARCHAR}, #{source,jdbcType=VARCHAR}, #{referrence,jdbcType=LONGVARCHAR}, #{fullText,jdbcType=LONGVARCHAR}, #{correspondingInfo,jdbcType=VARCHAR},
+      #{fullCorrespondingAuthor,jdbcType=VARCHAR}
+      )
+  </insert>
+  
+  <insert id="insertAuthor" parameterType="selleck.email.pojo.Author" useGeneratedKeys="true" keyProperty="id">
+    insert into selleck_edm_author ( full_name, short_name, address, organization,EMAIL,SOURCE
+      )
+    values (#{fullName,jdbcType=VARCHAR}, #{shortName,jdbcType=VARCHAR}, 
+      #{address,jdbcType=VARCHAR}, #{organization,jdbcType=VARCHAR},#{email,jdbcType=VARCHAR},#{source,jdbcType=VARCHAR}
+      )
+  </insert>
+  
+  <insert id="insertArticleAuthorRel" parameterType="selleck.email.pojo.ArticleAuthorRel">
+    insert into selleck_edm_article_author_rel (author_id, article_id , priority
+      )
+    values (#{authorId,jdbcType=INTEGER}, #{articleId,jdbcType=INTEGER}, #{priority,jdbcType=INTEGER}
+      )
+  </insert>
+
+</mapper>

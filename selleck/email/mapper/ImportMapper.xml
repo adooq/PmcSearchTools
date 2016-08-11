@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="selleck.email.dao.ImportMapper">
+
+	<update id="createNewEmailTable"  parameterType="java.lang.String">
+		drop table IF EXISTS ${value};
+		create table ${value} like selleck_edm_author_nodup_ca;
+	</update>
+	
+	<insert id="insertNewEmail" >
+INSERT IGNORE into ${param1}
+select a.* from 
+	selleck_edm_author a left JOIN selleck_edm_author_nodup_ca ca on a.email = ca.email 	
+	left JOIN emailhunter.all_email_list e on a.email = e.email
+	where a.id > ${param2}
+		and a.email is not null and a.email != '' 
+		and SUBSTRING_INDEX(a.email, '@', -1) != 'yahoo.com.cn' and SUBSTRING_INDEX(a.email, '@', -1) != 'yahoo.cn'
+		and ca.email is NULL and e.email is NULL
+	GROUP BY a.email
+	</insert>
+	
+	<select id="selectArticleCount"  parameterType="java.lang.Integer" resultType="java.lang.Integer" >
+		select count(*) from selleck_edm_article where id > #{startId}
+	</select>
+	
+	<select id="selectEmailCount"  parameterType="java.lang.Integer" resultType="java.lang.Integer" >
+		select count(distinct email) from selleck_edm_author where id > #{startId} and email != ''
+	</select>
+	
+	<select id="selectNewEmailCount"  parameterType="java.lang.String" resultType="java.lang.Integer" >
+		select count(*) from ${value}
+	</select>
+	
+	<insert id="insertIntoCA"  parameterType="java.lang.String">
+		INSERT IGNORE into selleck_edm_author_nodup_ca 
+			select * from ${value}
+	</insert>
+	<insert id="insertIntoALL"  parameterType="java.lang.String">
+		INSERT IGNORE into selleck_edm_author_nodup 
+			select * from ${value}
+	</insert>
+
+</mapper>

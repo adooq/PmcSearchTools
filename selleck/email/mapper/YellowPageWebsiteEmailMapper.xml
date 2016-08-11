@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="selleck.email.dao.YellowPageWebsiteEmailMapper">
+	<resultMap id="BaseResultMap" type="selleck.email.pojo.YellowPageWebsiteEmail">
+		<id column="ID" property="id" jdbcType="INTEGER" />
+		<result column="website" property="website" jdbcType="VARCHAR" />
+		<result column="real_url" property="realUrl" jdbcType="VARCHAR" />
+		<result column="email" property="email" jdbcType="VARCHAR" />
+		<result column="tier" property="tier" jdbcType="INTEGER" />
+	</resultMap>
+    
+	<sql id="Base_Column_List">
+		id,website,real_url,email,tier
+  	</sql>	
+	<insert id="saveYellowPageWebsiteEmail" parameterType="selleck.email.pojo.YellowPageWebsiteEmail">
+		insert into selleck_edm_yellowpage_email (website,real_url,email,tier)
+		values (#{website,jdbcType=VARCHAR},#{realUrl,jdbcType=VARCHAR}, #{email,jdbcType=VARCHAR},  #{tier,jdbcType=INTEGER})
+	</insert>
+	
+	<select id="selectByExample" resultMap="BaseResultMap" parameterType="common.handle.model.Criteria">
+			select
+		<if test="distinct">
+			distinct
+    	</if>
+		<include refid="Base_Column_List" />
+		from selleck_edm_yellowpage_email 
+		<if test="whereClause != null" >
+			where ${whereClause}
+		</if>
+		<if test="orderByClause != null" >
+			order by ${orderByClause}
+		</if>
+	</select>
+	
+	<update id="updateYellowPageWebsiteEmail" parameterType="selleck.email.pojo.YellowPageWebsiteEmail">
+		update selleck_edm_yellowpage_email
+		set website = #{website,jdbcType=VARCHAR}, real_url = #{realUrl,jdbcType=VARCHAR} , email = #{email,jdbcType=VARCHAR} , tier = #{tier,jdbcType=INTEGER})
+		where ID = #{id,jdbcType=INTEGER}
+  </update>
+</mapper>

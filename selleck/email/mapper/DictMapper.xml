@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="selleck.email.dao.DictMapper">
+	<resultMap id="BaseResultMap" type="selleck.email.interest.beans.DictClass">
+		<id column="ID" property="id" jdbcType="INTEGER" />
+		<result column="keyword" property="keyword" jdbcType="VARCHAR" />
+		<result column="INTEREST" property="interests" jdbcType="VARCHAR" />
+		<result column="KEYWORD" property="keyword" jdbcType="VARCHAR" />
+		<result column="CATEGORYID" property="categoryId" jdbcType="INTEGER" />
+		<result column="add_date" property="addDate" jdbcType="TIMESTAMP" />
+		<result column="flag" property="flag" jdbcType="INTEGER" />
+	</resultMap>
+    
+    <sql id="Example_Where_Clause" >
+    <trim prefix="where" prefixOverrides="and|or" >
+      <if test="condition.field != null" >
+         and FIELD = #{condition.field}
+      </if>
+    </trim>
+  </sql>
+  
+	<sql id="Base_Column_List">
+		ID,KEYWORD,INTEREST,CATEGORYID,add_date,flag
+  	</sql>
+  	
+  	<select id="selectByExample" resultMap="BaseResultMap" parameterType="common.handle.model.Criteria" >
+    <include refid="common.MySql_Pagination_Head" />
+    select
+    <if test="distinct" >
+      distinct
+    </if>
+    <include refid="Base_Column_List" />
+    from brand_dict
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+    <if test="orderByClause != null" >
+      order by ${orderByClause}
+    </if>
+    <include refid="common.MySql_Pagination_Tail" />
+  </select>
+  
+  <insert id="insertDict" parameterType="selleck.email.interest.beans.DictClass" useGeneratedKeys="true" keyProperty="id">
+    insert into brand_dict ( KEYWORD,INTEREST,CATEGORYID,add_date,flag )
+    values ( #{keyword,jdbcType=VARCHAR}, #{interests,jdbcType=VARCHAR}, 
+      #{categoryId,jdbcType=INTEGER}, #{addDate,jdbcType=TIMESTAMP},#{flag,jdbcType=INTEGER}
+      )
+  </insert>
+</mapper>

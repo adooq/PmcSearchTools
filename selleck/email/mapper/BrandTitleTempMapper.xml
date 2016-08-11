@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="selleck.email.dao.BrandTitleTempMapper">
+    <resultMap id="BaseResultMap" type="selleck.email.pojo.BrandTitleTemp">
+		<id column="ID" property="id" jdbcType="INTEGER" />
+		<result column="title" property="title" jdbcType="VARCHAR" />
+		<result column="abstract" property="abs" jdbcType="LONGVARCHAR" />
+		<result column="keyword" property="keyword" jdbcType="VARCHAR" />
+		<result column="KEY_PLUS" property="keywordPlus" jdbcType="VARCHAR" />
+		<result column="CORRESPONDINGAUTHOR" property="correspondingAuthor" jdbcType="LONGVARCHAR" />
+		<result column="CORRESPONDINGADDRESS" property="correspondingAddress" jdbcType="LONGVARCHAR" />
+		<result column="AUTHORS" property="authors" jdbcType="LONGVARCHAR" />
+		<result column="ADDRESSES" property="addresses" jdbcType="LONGVARCHAR" />
+		<result column="email" property="email" jdbcType="VARCHAR" />
+		<result column="SOURCE_PUBLICATION" property="sourcePublication" jdbcType="VARCHAR" />
+		<result column="PDATE" property="pDate" jdbcType="VARCHAR" />
+		<result column="type" property="type" jdbcType="VARCHAR" />
+		<result column="classification" property="classification" jdbcType="VARCHAR" />
+		<result column="research" property="research" jdbcType="VARCHAR" />
+		<result column="have_read" property="haveRead" jdbcType="TINYINT" />
+	</resultMap>
+	
+    <sql id="Base_Column_List">
+		ID,KEYWORD,PICK_DATE,ORIGINALTITLE,WEBSITE,HAVEREAD
+  	</sql>
+	
+	<insert id="insert" parameterType="selleck.email.pojo.BrandTitleTemp">
+		INSERT IGNORE into brand_title_temp
+	( KEYWORD,PICK_DATE,ORIGINALTITLE,WEBSITE,HAVEREAD )
+    values ( #{keyword,jdbcType=VARCHAR}, #{pickDate,jdbcType=TIMESTAMP},#{originalTitle,jdbcType=LONGVARCHAR},
+    	#{website,jdbcType=VARCHAR}, #{haveRead,jdbcType=INTEGER}
+      )
+	</insert>
+	
+	<select id="selectByCriteria" resultMap="BaseResultMap" parameterType="common.handle.model.Criteria" >
+    select
+    <if test="distinct" >
+      distinct
+    </if>
+    <include refid="Base_Column_List" />
+    from brand_title_temp
+    <if test="whereClause != null" >
+      where ${whereClause}
+    </if>
+    <if test="orderByClause != null" >
+      order by ${orderByClause}
+    </if>
+  </select>
+  
+  <update id="setRead" parameterType="selleck.email.pojo.BrandTitleTemp" >
+    update brand_title_temp
+	set HAVEREAD = 1 , HAVEFOUND = #{haveFound,jdbcType=INTEGER}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  
+  <select id="selectMaxId" resultType="java.lang.Integer" >
+    select max(id) from brand_title_temp
+  </select>
+
+</mapper>

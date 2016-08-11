@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8" ?>  
+<!DOCTYPE configuration PUBLIC "-//mybatis.org//DTD Config 3.0//EN" "http://mybatis.org/dtd/mybatis-3-config.dtd">
+
+<configuration>
+
+	<typeAliases>  
+        <typeAlias alias="Criteria" type="common.handle.model.Criteria"/>  
+        <typeAlias alias="LabmemReference" type="selleck.email.pojo.LabmemReference"/>
+        <typeAlias alias="EdmEmailGeneral" type="selleck.email.pojo.EdmEmailGeneral"/>
+    </typeAliases>
+	
+	<environments default="development">
+		<environment id="development">
+			<transactionManager type="JDBC" />
+			<!--
+			<dataSource type="POOLED">
+				<property name="driver" value="com.mysql.jdbc.Driver" />				
+				<property name="url" value="jdbc:mysql://192.168.3.98:3306/emailhunter?useUnicode=true&amp;characterEncoding=UTF-8" />
+				<property name="username" value="root" />
+				<property name="password" value="sherlock1030" />
+			</dataSource>
+			-->
+			
+			<dataSource type="POOLED">
+				<property name="driver" value="com.mysql.jdbc.Driver" />
+				<property name="url" value="jdbc:mysql://192.168.3.252:3306/?useUnicode=true&amp;characterEncoding=UTF-8" />
+				<property name="username" value="selleck" />
+				<property name="password" value="252#$%selleck!@" />
+			</dataSource>
+			
+			<!--
+			<dataSource type="POOLED">
+				<property name="driver" value="com.mysql.jdbc.Driver" />
+				<property name="url" value="jdbc:mysql://192.168.3.112:3306/emailhunter?useUnicode=true&amp;characterEncoding=UTF-8" />
+				<property name="username" value="root" />
+				<property name="password" value="selleckemail2013" />
+			</dataSource>
+			-->
+		</environment>
+	</environments>
+	
+	<mappers>
+        <mapper resource="selleck/email/mapper/LabmemReferenceMapper.xml" />
+        <mapper resource="selleck/email/mapper/EdmEmailGeneralMapper.xml" />
+        <mapper resource="selleck/email/mapper/DictMapper.xml" />
+        <mapper resource="selleck/email/mapper/WOSMapper.xml" />
+        <mapper resource="selleck/email/mapper/CNKIMapper.xml" />
+        <mapper resource="selleck/email/mapper/ArticleMapper.xml" />
+        <mapper resource="selleck/email/mapper/AuthorInterestMapper.xml" />
+        <mapper resource="selleck/email/mapper/AuthorMapper.xml" />
+        <mapper resource="selleck/email/mapper/ProductMapper.xml" />
+        <mapper resource="selleck/email/mapper/GeneralMapper.xml" />
+        <mapper resource="selleck/email/mapper/GoogleSearchMapper.xml" />
+        <mapper resource="selleck/email/mapper/GoogleSearchEmailMapper.xml" />
+        <mapper resource="selleck/email/mapper/GoogleRecordMapper.xml" />
+        <mapper resource="selleck/email/mapper/common_SqlMap.xml" />
+    </mappers>   
+
+</configuration>

@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="selleck.email.dao.AuthorInterestMapper">
+	<resultMap id="BaseResultMap" type="selleck.email.pojo.AuthorInterest">
+		<id column="ID" property="id" jdbcType="INTEGER" />
+		<result column="author_id" property="authorId" jdbcType="VARCHAR" />
+		<result column="product" property="product" jdbcType="VARCHAR" />
+		<result column="small" property="small" jdbcType="VARCHAR" />
+		<result column="big" property="big" jdbcType="VARCHAR" />
+		<result column="score" property="score" jdbcType="INTEGER" />
+		<result column="match_keys" property="matchKeys" jdbcType="VARCHAR" />
+		<result column="interests" property="interests" jdbcType="VARCHAR" />
+	</resultMap>
+    
+    <sql id="Example_Where_Clause" >
+    <trim prefix="where" prefixOverrides="and|or" >
+      <if test="condition.email != null" >
+         and email = #{condition.email}
+      </if>
+      <if test="condition.have_read != null" >
+         and have_read = #{condition.have_read}
+      </if>
+    </trim>
+  </sql>
+  
+	<sql id="Base_Column_List">
+		ID,author_id,product,small,big,score,match_keys,interests
+  	</sql>
+  	
+  	<select id="getAuthorInterestByAuthorId" resultMap="BaseResultMap" parameterType="selleck.email.pojo.Author" >
+    select
+    <if test="distinct" >
+      distinct
+    </if>
+    <include refid="Base_Column_List" />
+    from emailhunter.selleck_edm_interest
+    <if test="whereClause != null" >
+      where ${whereClause}
+    </if>
+    <if test="orderByClause != null" >
+      order by ${orderByClause}
+    </if>
+  </select>
+  
+ <update id="updateArticle" parameterType="map" >
+    update base_fields
+    <set >
+      <if test="record.fieldId != null" >
+        FIELD_ID = #{record.fieldId},
+      </if>
+      <if test="record.field != null" >
+        FIELD = #{record.field},
+      </if>
+      <if test="record.fieldName != null" >
+        FIELD_NAME = #{record.fieldName},
+      </if>
+      <if test="record.valueField != null" >
+        VALUE_FIELD = #{record.valueField},
+      </if>
+      <if test="record.displayField != null" >
+        DISPLAY_FIELD = #{record.displayField},
+      </if>
+      <if test="record.enabled != null" >
+        ENABLED = #{record.enabled},
+      </if>
+      <if test="record.sort != null" >
+        SORT = #{record.sort},
+      </if>
+      <if test="record.needLocale != null" >
+        NEED_LOCALE = #{record.needLocale},
+      </if>
+    </set>
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+  </update>
+  
+  <insert id="saveAuthorInterest" parameterType="selleck.email.pojo.AuthorInterest">
+    insert into emailhunter.selleck_edm_interest ( author_id, product, small,big,score,match_keys,interests
+      )
+    values ( #{authorId,jdbcType=INTEGER}, #{product,jdbcType=VARCHAR}, 
+      #{small,jdbcType=VARCHAR}, #{big,jdbcType=VARCHAR},#{score,jdbcType=INTEGER},
+      #{matchKeys,jdbcType=VARCHAR},#{interests,jdbcType=VARCHAR}
+      )
+  </insert>
+
+</mapper>

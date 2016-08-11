@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="selleck.email.dao.OrganizationMapper">
+	<resultMap id="BaseResultMap" type="selleck.email.pojo.Organization">
+		<id column="id" property="id" jdbcType="INTEGER" />
+		<result column="address" property="address" jdbcType="VARCHAR" />
+		<result column="organization" property="organization" jdbcType="VARCHAR" />
+		<result column="prefix" property="prefix" jdbcType="VARCHAR" />
+		<result column="country" property="country" jdbcType="VARCHAR" />
+	</resultMap>
+	
+	<sql id="Base_Column_List">
+		id,address,organization,prefix,country
+  	</sql>
+  	
+  	<select id="selectByExample" resultMap="BaseResultMap" parameterType="common.handle.model.Criteria" >
+    <include refid="common.MySql_Pagination_Head" />
+    select
+    <include refid="Base_Column_List" />
+    from ${tableName} 
+    <if test="whereClause != null" >
+      where ${whereClause}
+    </if>
+    <if test="orderByClause != null" >
+      order by ${orderByClause}
+    </if>
+    <include refid="common.MySql_Pagination_Tail" />
+  </select>
+  
+
+  <delete id="deleteOrganization" parameterType="selleck.email.pojo.Organization">
+ 	 delete from organization
+ 	 where id= #{id,jdbcType=INTEGER}
+  </delete>
+ <update id="updateOrganization"  parameterType="selleck.email.pojo.Organization">
+    update organization
+    set
+		address= #{address, jdbcType=VARCHAR},
+		organization= #{organization, jdbcType=VARCHAR},
+		prefix= #{prefix, jdbcType=VARCHAR},
+		country= #{country, jdbcType=VARCHAR}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  
+  <update id="saveOrganization"  parameterType="selleck.email.pojo.Organization">
+    insert ignore into organization(address,organization,prefix,country )
+    values (
+    #{address, jdbcType=VARCHAR},
+    #{organization, jdbcType=VARCHAR},
+    #{prefix, jdbcType=VARCHAR},
+    #{country, jdbcType=VARCHAR}
+    )
+    
+  
+  </update>
+  
+   <insert id="insertOrganization" parameterType="selleck.email.pojo.Organization" useGeneratedKeys="true" keyProperty="id">
+    insert into organization( address,organization,prefix,country )
+    values (
+    #{address, jdbcType=VARCHAR},
+    #{organization, jdbcType=VARCHAR},
+    #{prefix, jdbcType=VARCHAR},
+    #{country, jdbcType=VARCHAR}
+    )
+  </insert>
+  
+</mapper>
